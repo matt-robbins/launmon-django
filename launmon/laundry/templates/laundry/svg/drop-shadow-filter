@@ -1,0 +1,10 @@
+<filter id="drop-shadow">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="0"/>
+  <feOffset dx="0" dy="0" result="offsetblur"/>
+  <feFlood flood-color="#ffffff"/>
+  <feComposite in2="offsetblur" operator="in"/>
+  <feMerge>
+    <feMergeNode/>
+    <feMergeNode in="SourceGraphic"/>
+  </feMerge>
+</filter>

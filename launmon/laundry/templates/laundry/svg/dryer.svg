@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg
+  version="1.1"
+  id="Layer_1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 360.8 360.8"
+  style="enable-background: new 0 0 360.8 360.8"
+  xml:space="preserve"
+  class="machine dryer"
+>
+  <defs>{% include './drop-shadow-filter' %}</defs>
+  <g>
+    <path
+      d="M352.7,0H8.5C4,0,0.4,3.6,0.4,8.1v344.2c0,4.5,3.6,8.1,8.1,8.1h344.2c4.5,0,8.1-3.6,8.1-8.1V8.1C360.8,3.6,357.2,0,352.7,0
+		z M344.6,16.3v52.8H16.6V16.3H344.6z M300.6,86.9v165.9c0,26.6-21.6,48.2-48.2,48.2H108.8c-26.6,0-48.2-21.6-48.2-48.2V86.9H300.6z
+		 M16.6,344.2V85.4h27.7v167.4c0,35.6,28.9,64.5,64.5,64.5h143.5c35.6,0,64.5-28.9,64.5-64.5V85.4h27.7v258.8H16.6z"
+    />
+    <path
+      d="M287.4,49.7h26.6c4.5,0,8.1-3.6,8.1-8.1s-3.6-8.1-8.1-8.1h-26.6c-4.5,0-8.1,3.6-8.1,8.1S282.9,49.7,287.4,49.7z"
+    />
+    <path
+      d="M219.2,49.7h26.6c4.5,0,8.1-3.6,8.1-8.1s-3.6-8.1-8.1-8.1h-26.6c-4.5,0-8.1,3.6-8.1,8.1S214.7,49.7,219.2,49.7L219.2,49.7z
+		"
+    />
+  </g>
+  <text class="label" x="50%" y="55%" filter="url(#drop-shadow)">Offline</text>
+</svg>
