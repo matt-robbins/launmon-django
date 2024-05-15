@@ -84,6 +84,6 @@ class DataMuncher:
             if loc.type.name == 'stack':
                 self.processors[loc.pk] = HeuristicSignalProcessor()
             else:
-                self.processors[loc.pk] = SimpleSignalProcessor(thresh=1,type=loc.type.name)
+                self.processors[loc.pk] = SimpleSignalProcessor(thresh=0.2,type=loc.type.name)
             self.lastseen[loc.pk] = now - timedelta(days=1)
 
