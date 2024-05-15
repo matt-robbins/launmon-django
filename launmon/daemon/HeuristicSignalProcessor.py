@@ -172,10 +172,13 @@ class SimpleSignalProcessor(SignalProcessor):
                 self.count = 0
 
         elif (self.state == self.active_state):
+            if (sample > self.thresh):
+                self.count = 0
+            else:
+                self.count += 1
             if (sample < self.thresh and self.count > self.timeout):
                 new_state = State.NONE
                 self.count = 0
-            self.count += 1
 
         if new_state != self.state:
             self.state = new_state
