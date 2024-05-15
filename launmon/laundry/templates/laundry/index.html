@@ -19,16 +19,16 @@
     <div class="col-sm col-md-6 offset-md-3 card mb-3">
       <div
         class="class-body d-flex flex-row justify-content-between m-2 flex-grow"
-        id="floor-{{location.nickname}}"
+        id="location-{{location.pk}}"
       >
         <div class="d-flex flex-column justify-content-between">
           <div class="row">
             <h5 class="card-title">{{ location.nickname }}</h5>
             <h6
               class="card-subtitle text-muted mb-2"
-              data-js-attr="floor-updated-at"
+              data-js-attr="location-updated-at"
             >
-              Never
+              {{ location.latest_time }}
             </h6>
           </div>
           <div></div>
@@ -37,12 +37,12 @@
               <input
                 class="btn-check notify-button"
                 type="checkbox"
-                id="subcheck-{{ location.id }}"
+                id="subcheck-{{ location.pk }}"
                 autocomplete="off"
               />
               <label
                 class="btn btn-outline-primary"
-                for="subcheck-{{ location.id }}"
+                for="subcheck-{{ location.pk }}"
                 >Notify Me</label
               >
             </div>
@@ -55,18 +55,22 @@
           <div class="m-2">
             <a
               class="btn btn-outline-warning issue-indicator {% if location.latest_issue %}issue{% endif %}"
-              id="issue-{{ location.location }}"
-              href="issues/{{ location.location }}">!</a
+              id="issue-{{ location.pk }}"
+              href="issues/{{ location.pk }}">!</a
             >
           </div>
       
           <div class="d-flex flex-column justify-content-between">
+            {% if location.type.name == 'dryer' or location.type.name == 'stack' %}
             <div class="dryer-container pb-2" id="dryer-{{ location.id }}">
-              {% include './svg/dryer.svg' %}
+              {% include './svg/dryer.svg' with status=location.latest_status %}
             </div>
+            {% endif %}
+            {% if location.type.name == 'washer' or location.type.name == 'stack' %}
             <div class="washer-container" id="washer-{{ location.id }}">
-              {% include './svg/washer.svg' %}
+              {% include './svg/washer.svg' with status=location.latest_status %}
             </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -74,5 +78,6 @@
     {% endfor %}
   </div>
 </div>
-<script src="/static/status.js"></script>
+{% load static %}
+<script src="{% static 'status.js' %}"></script>
 {% endblock %}

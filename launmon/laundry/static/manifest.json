@@ -1,0 +1,6 @@
+{
+  "name": "LaundryMon",
+  "short_name": "Laundry",
+  "display": "standalone",
+  "start_url": "/laundry/"
+}

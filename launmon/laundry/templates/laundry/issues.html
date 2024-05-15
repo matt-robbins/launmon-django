@@ -27,7 +27,7 @@
                 {% if issue.fix_time %}
                     <td>{{ issue.fix_time }}</td>
                 {% else %}
-                <td><a href="issue_fix/{{ issue.id }}" class="btn btn-primary">Fix</a></td>
+                <td><a href="fix/{{ issue.id }}" class="btn btn-primary">Fix</a></td>
                 {% endif %}
             </tr>
         {% endfor %}

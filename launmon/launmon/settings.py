@@ -68,6 +68,8 @@ TEMPLATES = [
     },
 ]
 
+LOGIN_REDIRECT_URL = '/laundry'
+
 WSGI_APPLICATION = 'launmon.wsgi.application'
 
 
@@ -76,8 +78,19 @@ WSGI_APPLICATION = 'launmon.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'launmon',
+        'USER': 'launy',
+        'PASSWORD': 'monny',
+        'HOST': 'localhost',
+        'PORT': 5432
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
     }
 }
 

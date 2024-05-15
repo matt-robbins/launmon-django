@@ -8,7 +8,7 @@
   viewBox="0 0 360.8 360.8"
   style="enable-background: new 0 0 360.8 360.8"
   xml:space="preserve"
-  class="machine dryer"
+  class="machine dryer {{ status }}"
 >
   <defs>{% include './drop-shadow-filter' %}</defs>
   <g>
@@ -25,5 +25,5 @@
 		"
     />
   </g>
-  <text class="label" x="50%" y="55%" filter="url(#drop-shadow)">Offline</text>
+  <!-- <text class="label" x="50%" y="55%" filter="url(#drop-shadow)">Offline</text> -->
 </svg>
