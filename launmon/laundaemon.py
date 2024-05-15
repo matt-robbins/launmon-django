@@ -34,6 +34,8 @@ async def mqtt_main(muncher):
             traceback.print_exc(file=sys.stdout)
             await asyncio.sleep(1)
 
+        
+
 async def checker(muncher):
     while True:
         # muncher.checkOffline(datetime.now(tz=timezone.utc))
@@ -42,7 +44,9 @@ async def checker(muncher):
 
 if __name__ == '__main__':
     m = DataMuncher()
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    # loop = asyncio.get_event_loop()
 
     # t = loop.create_datagram_endpoint(lambda: V2Protocol(m), local_addr=('0.0.0.0', 5555))
     # loop.run_until_complete(t)
