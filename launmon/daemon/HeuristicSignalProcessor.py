@@ -139,15 +139,17 @@ class SimpleSignalProcessor(SignalProcessor):
         self.type = type
         self.state = State.NONE
         self.active_state = State.WASH
+        self.timeout = 20
         if (self.type == 'dryer'):
+            self.timeout = 3
             self.active_state = State.DRY
         self.count = 0
+        self.spike_det = SpikeDetector(thresh=0.05,rthresh=0.05)
 
     def reset(self):
         self.__init__()
 
     def process_sample(self, sample, only_diff=True):
-        self.count += 1
 
         # use nan to represent a gap in data
         if math.isnan(sample):
@@ -159,17 +161,21 @@ class SimpleSignalProcessor(SignalProcessor):
                 self.reset()
                 return State.NONE
             
+        spike,spike_count = self.spike_det.process_sample(sample)
+            
         new_state = self.state
         
         if (self.state == State.NONE):
-            if (sample > self.thresh):
+
+            if (sample > self.thresh or (spike > 0 and self.type == 'washer')):
                 new_state = self.active_state
                 self.count = 0
 
         elif (self.state == self.active_state):
-            if (sample < self.thresh/2.0):
+            if (sample < self.thresh and self.count > self.timeout):
                 new_state = State.NONE
                 self.count = 0
+            self.count += 1
 
         if new_state != self.state:
             self.state = new_state
