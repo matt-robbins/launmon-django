@@ -20,4 +20,6 @@ urlpatterns = [
         content_type='application/javascript', )), name='webpush.js'),
     path('util.js', (TemplateView.as_view(template_name="laundry/util.js", 
         content_type='application/javascript', )), name='util.js'),
+    path('status.js', (TemplateView.as_view(template_name="laundry/status.js", 
+        content_type='application/javascript', )), name='status.js'),
 ]

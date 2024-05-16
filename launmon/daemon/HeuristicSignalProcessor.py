@@ -140,11 +140,12 @@ class SimpleSignalProcessor(SignalProcessor):
         self.state = State.NONE
         self.active_state = State.WASH
         self.timeout = 20
+        self.thresh = 0.15
         if (self.type == 'dryer'):
             self.timeout = 3
+            self.thresh = 1
             self.active_state = State.DRY
         self.count = 0
-        self.spike_det = SpikeDetector(thresh=0.05,rthresh=0.05)
 
     def reset(self):
         self.__init__()
@@ -160,14 +161,12 @@ class SimpleSignalProcessor(SignalProcessor):
             else:
                 self.reset()
                 return State.NONE
-            
-        spike,spike_count = self.spike_det.process_sample(sample)
-            
+                        
         new_state = self.state
         
         if (self.state == State.NONE):
 
-            if (sample > self.thresh or (spike > 0 and self.type == 'washer')):
+            if (sample > self.thresh):
                 new_state = self.active_state
                 self.count = 0
 
