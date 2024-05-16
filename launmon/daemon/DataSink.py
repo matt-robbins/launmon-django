@@ -1,7 +1,6 @@
 from redis import Redis
 
 import os.path
-import datetime
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'launmon.settings')
 
@@ -10,6 +9,8 @@ django.setup()
 
 from laundry.models import Rawcurrent, Event, Location, Device
 from django.db import transaction
+
+from datetime import datetime, timezone, timedelta
 
 
 class DataSink:
@@ -47,7 +48,8 @@ class CurrentSink(DataSink):
 
     @transaction.atomic
     def save_buf(self):
-        return
+        Rawcurrent.objects.filter(time__lt=datetime.now(tz=timezone.utc)-timedelta(days=2)).delete()
+
         while len(self.buf) > 0:
             cur = self.buf.pop()
             cur.save()

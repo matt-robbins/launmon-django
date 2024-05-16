@@ -13,7 +13,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'launmon.settings')
 import django
 django.setup()
 
-from laundry.models import Rawcurrent, Event, Location, Device, Subscription
+from laundry.models import Location, Subscription
 
 def push_main(subscription={},data={}):
     try:
@@ -79,21 +79,26 @@ class Webpusher:
 
             loc = Location.objects.get(id=location)
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-                futures = []
+            for s in Subscription.objects(location=loc).all():
+                sub = json.loads(s.subscription)
+                payload['location'] = loc.nickname
+                push_main(sub,payload)
 
-                for s in Subscription.objects(location=loc).all():
-                    sub = json.loads(s.subscription)
-                    payload['location'] = loc.nickname
+            # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            #     futures = []
 
-                    futures.append(executor.submit(push_main,sub,payload))
-                for f in futures:
-                    try:
-                        res = f.result()
-                        print(res)
-                    except Exception:
-                        print(sub['endpoint'])
-                        db.deleteSubscription(sub['endpoint'],location)
+            #     for s in Subscription.objects(location=loc).all():
+            #         sub = json.loads(s.subscription)
+            #         payload['location'] = loc.nickname
+
+            #         futures.append(executor.submit(push_main,sub,payload))
+            #     for f in futures:
+            #         try:
+            #             res = f.result()
+            #             print(res)
+            #         except Exception:
+            #             print(sub['endpoint'])
+            #             db.deleteSubscription(sub['endpoint'],location)
  
         
 if __name__ == "__main__":
