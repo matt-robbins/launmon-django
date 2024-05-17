@@ -33,7 +33,7 @@ $(function () {
     update();
   }, 5000);
 
-  ws = new WebSocket("wss://websocket");
+  ws = new WebSocket("wss://" + location.host + "/websocket");
   ws.addEventListener("message", (event) => {
     e = JSON.parse(event.data);
     if (e.status) {
