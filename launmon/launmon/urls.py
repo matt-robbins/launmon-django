@@ -19,13 +19,14 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 from laundry import views as launviews
+from sesame.views import LoginView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include("django.contrib.auth.urls")),
-    path("autoreg/", launviews.autoreg,name="autoreg"),
     path("laundry/", include("laundry.urls")),
+    path("sesame/login/", LoginView.as_view(), name="sesame-login"),
     path('sw.js', (TemplateView.as_view(template_name="laundry/sw.js", 
         content_type='application/javascript', )), name='sw.js'),
 ]

@@ -11,11 +11,11 @@
   <p>Your account doesn't have access to this page. To proceed,
   please login with an account that has access.</p>
 {% else %}
-  <p>Please login to see this page.</p>
+  <p class="text-center">Please scan the QR-code in your laundry room to view this page.</p>
 {% endif %}
 {% endif %}
 
-<form method="post" action="{% url 'login' %}">
+<!-- <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
 <table>
   <tr>
@@ -31,6 +31,6 @@
 <input type="hidden" name="next" value="{{ next }}">
 </form>
 
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+<p><a href="{% url 'password_reset' %}">Lost password?</a></p> -->
 
 {% endblock %}

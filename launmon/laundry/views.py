@@ -1,27 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from django.core import serializers
 import json
 
-from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
 
 from .models import Location, Issue, Subscription, UserSite
 from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
-
-    
-def autoreg(request):
-    uname = request.GET['user']
-    password = request.GET['password']
-    user = authenticate(request, username=uname, password=password)
-    if user is not None:
-        login(request, user)
-
-    return redirect("/laundry")
 
 
 @login_required
@@ -90,7 +77,7 @@ def issue_fix(request,issue=None):
         if form.is_valid():
             print(form.cleaned_data)
 
-            obj = Issue.objects.get(pk=form.cleaned_data['issue'].id)
+            obj = Issue.objects.get(pk=issue)
             obj.fix_description = form.cleaned_data['fix_description']
             obj.fix_time = datetime.now(timezone.utc)
             obj.save()
