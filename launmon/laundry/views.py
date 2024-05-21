@@ -6,18 +6,35 @@ import json
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 
-from .models import Location, Issue, Subscription, Site, UserSite
+from .models import Location, Issue, Subscription, UserSite
 from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
 
+    
+def autoreg(request):
+    uname = request.GET['user']
+    password = request.GET['password']
+    user = authenticate(request, username=uname, password=password)
+    if user is not None:
+        login(request, user)
+
+    return redirect("/laundry")
+
+
 @login_required
 def index(request):
     user = request.user
-    site = UserSite.objects.get(user=user).site
-    locs = Location.objects.filter(site=site).order_by("nickname")
-    context = {"locations": locs}
+    try:
+        site = UserSite.objects.get(user=user).site
+        locs = Location.objects.filter(site=site).order_by("nickname")
+    except Exception as e:
+        locs = []
+        site = None
+    
+    context = {"locations": locs, "site": site}
 
     return render(request,"laundry/index.html",context)
 

@@ -15,67 +15,72 @@
 {% block content %}
 <div class="container w-100 mt-3">
   <div class="col">
-    {% for location in locations %}
-    <div class="col-sm col-md-6 offset-md-3 card mb-3">
-      <div
-        class="class-body d-flex flex-row justify-content-between m-2 flex-grow"
-        id="location-{{location.pk}}"
-      >
-        <div class="d-flex flex-column justify-content-between">
-          <div class="row">
-            <h5 class="card-title">{{ location.nickname }}</h5>
-            <h6
-              class="card-subtitle text-muted mb-2"
-              data-js-attr="location-updated-at"
-            >
-              {{ location.latest_time }}
-            </h6>
+    {% if site == None %}
+      <div class="col-sm col-md-6 offset-md-3 card mb-3">
+        <h4 class="text-center">You Are Not Registered to Any Sites :(</h4>
+        <p class="text-center">Try scanning your QR code again, or talk to your property manager or landlord.</p>
+      </div>
+    {% else %}
+      {% for location in locations %}
+      <div class="col-sm col-md-6 offset-md-3 card mb-3">
+        <div
+          class="class-body d-flex flex-row justify-content-between m-2 flex-grow"
+          id="location-{{location.pk}}"
+        >
+          <div class="d-flex flex-column justify-content-between">
+            <div class="row">
+              <h5 class="card-title">{{ location.nickname }}</h5>
+              <h6
+                class="card-subtitle text-muted mb-2"
+                data-js-attr="location-updated-at"
+              >
+                {{ location.latest_time }}
+              </h6>
+            </div>
+            <div></div>
+            <div class="row-1 d-flex justify-content-between">
+              <div class="">
+                <input
+                  class="btn-check notify-button"
+                  type="checkbox"
+                  id="subcheck-{{ location.pk }}"
+                  autocomplete="off"
+                />
+                <label
+                  class="btn btn-outline-primary"
+                  for="subcheck-{{ location.pk }}"
+                  ><i class="fa-solid fa-bell"></i></label
+                >
+              </div>
+            </div>
           </div>
-          <div></div>
-          <div class="row-1 d-flex justify-content-between">
-            <div class="">
-              <input
-                class="btn-check notify-button"
-                type="checkbox"
-                id="subcheck-{{ location.pk }}"
-                autocomplete="off"
-              />
-              <label
-                class="btn btn-outline-primary"
-                for="subcheck-{{ location.pk }}"
-                ><i class="fa-solid fa-bell"></i></label
+
+          <div class="d-flex flex-row justify-content-end">
+            <div class="m-2">
+              <a
+                class="btn btn-outline-warning issue-indicator {% if location.latest_issue %}issue{% endif %}"
+                id="issue-{{ location.pk }}"
+                href="issues/{{ location.pk }}">!</a
               >
             </div>
-            
-
-          </div>
-        </div>
-
-        <div class="d-flex flex-row justify-content-end">
-          <div class="m-2">
-            <a
-              class="btn btn-outline-warning issue-indicator {% if location.latest_issue %}issue{% endif %}"
-              id="issue-{{ location.pk }}"
-              href="issues/{{ location.pk }}">!</a
-            >
-          </div>
-      
-          <div class="d-flex flex-column justify-content-between">
-            {% if location.type.name == 'dryer' or location.type.name == 'stack' %}
-            <div class="dryer-container pb-2" id="dryer-{{ location.id }}">
-              {% include './svg/dryer.svg' with status=location.latest_status %}
+        
+            <div class="d-flex flex-column justify-content-between">
+              {% if location.type.name == 'dryer' or location.type.name == 'stack' %}
+              <div class="dryer-container pb-2" id="dryer-{{ location.id }}">
+                {% include './svg/dryer.svg' with status=location.latest_status %}
+              </div>
+              {% endif %}
+              {% if location.type.name == 'washer' or location.type.name == 'stack' %}
+              <div class="washer-container" id="washer-{{ location.id }}">
+                {% include './svg/washer.svg' with status=location.latest_status %}
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
-            {% if location.type.name == 'washer' or location.type.name == 'stack' %}
-            <div class="washer-container" id="washer-{{ location.id }}">
-              {% include './svg/washer.svg' with status=location.latest_status %}
-            </div>
-            {% endif %}
           </div>
         </div>
       </div>
-    </div>
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
   </div>
 </div>
 {% load static %}

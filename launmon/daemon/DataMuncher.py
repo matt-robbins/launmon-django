@@ -11,7 +11,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', '..launmon.settings')
 import django
 django.setup()
 
-from laundry.models import Location, Device
+from laundry.models import Location, Device, Rawcurrent
 
 from asgiref.sync import sync_to_async
 from django.core.cache import cache
@@ -81,9 +81,11 @@ class DataMuncher:
         self.processors = {}
         now = datetime.now(tz=timezone.utc)
         for loc in self.locations:
+            thresh = loc.get_baseline_current() * 1.5
+
             if loc.type.name == 'stack':
                 self.processors[loc.pk] = HeuristicSignalProcessor()
             else:
-                self.processors[loc.pk] = SimpleSignalProcessor(thresh=0.2,type=loc.type.name)
+                self.processors[loc.pk] = SimpleSignalProcessor(thresh=thresh,type=loc.type.name)
             self.lastseen[loc.pk] = now - timedelta(days=1)
 

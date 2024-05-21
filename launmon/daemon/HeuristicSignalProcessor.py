@@ -140,10 +140,8 @@ class SimpleSignalProcessor(SignalProcessor):
         self.state = State.NONE
         self.active_state = State.WASH
         self.timeout = 20
-        self.thresh = 0.15
         if (self.type == 'dryer'):
             self.timeout = 3
-            self.thresh = 1
             self.active_state = State.DRY
         self.count = 0
 

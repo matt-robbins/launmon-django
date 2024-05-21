@@ -60,6 +60,34 @@ class Location(models.Model):
             return issues[0]
         except IndexError:
             return None
+        
+    def get_baseline_current(self):
+        # use the cache cause this is expensive
+        cache_key = "%s_baseline:%s"%(Location.__name__,self.pk)
+
+        baseline = cache.get(cache_key)
+        if (baseline is not None):
+            return baseline
+
+        # grab 10th percentile of current data. This will provide some kind of measure of baseline
+        secs_per_day = 86400
+        pct_ix = int(secs_per_day / 10)
+        qs = Rawcurrent.objects.filter(location=self).filter(
+            time__gt=datetime.now(tz=timezone.utc)-timedelta(seconds=secs_per_day)
+            ).order_by(
+                'current').all()
+        
+        baseline = 1.0
+        if len(qs) == 0:
+            return baseline
+        try:
+            baseline = qs[pct_ix].current
+        except IndexError:
+            baseline = qs[0].current
+
+        cache.set(cache_key, baseline)
+        return baseline
+
     
 class Device(models.Model):
     device = models.CharField(primary_key=True, blank=True, max_length=16)
