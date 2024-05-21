@@ -46,6 +46,10 @@ class Location(models.Model):
         if lastseen is None:
             lastseen = datetime.now(tz=timezone.utc) - timedelta(seconds=86100)
 
+        issue = self.latest_issue()
+        if (issue is not None and issue.ooo == True):
+            return 'ooo'
+
         if (datetime.now(tz=timezone.utc)-lastseen).total_seconds() > 60:
             return 'offline'
 
@@ -145,6 +149,7 @@ class Issue(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     code = models.TextField(blank=True, null=True)
+    ooo = models.BooleanField(blank=True, null=True)
     time = models.DateTimeField(unique=True, blank=True, null=True)  
     fix_description = models.TextField(blank=True, null=True)
     fix_time = models.DateTimeField(blank=True, null=True) 
