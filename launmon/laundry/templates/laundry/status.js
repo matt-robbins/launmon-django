@@ -35,6 +35,7 @@ $(function () {
 
   ws = new WebSocket("wss://" + location.host + "/websocket");
   ws.addEventListener("message", (event) => {
+    console.log("got websocket message. Reloading")
     e = JSON.parse(event.data);
     if (e.status) {
       update();
