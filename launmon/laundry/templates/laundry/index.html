@@ -58,7 +58,7 @@
           <div class="d-flex flex-row justify-content-end">
             <div class="m-2">
               <a
-                class="btn btn-outline-warning issue-indicator {% if location.latest_issue %}issue{% endif %}"
+                class="btn btn-outline-warning issue-indicator {% if location.latest_issue and not location.latest_issue.ooo %}issue{% endif %}"
                 id="issue-{{ location.pk }}"
                 href="issues/{{ location.pk }}">!</a
               >

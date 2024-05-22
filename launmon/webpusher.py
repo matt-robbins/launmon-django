@@ -3,10 +3,8 @@ import redis
 import json
 from pywebpush import webpush, WebPushException
 from requests.exceptions import Timeout
-import concurrent.futures
 
 import os.path
-import datetime
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'launmon.settings')
 
