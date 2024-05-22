@@ -45,7 +45,7 @@ class LocationForm(forms.ModelForm):
     
 class LocationAdmin(admin.ModelAdmin):
     form = LocationForm
-    list_display = ("nickname", "site")
+    list_display = ("pk", "nickname", "site")
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(LocationAdmin, self).get_form(request, obj, **kwargs)

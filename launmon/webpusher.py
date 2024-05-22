@@ -41,9 +41,12 @@ class Webpusher:
 
             _, location = str.split(msg['channel'].decode(),':')
             trans = msg['data'].decode()
-
-            from_state,to_state = trans.split(":")
-
+            try:
+                from_state,to_state = trans.split(":")
+            except ValueError:
+                from_state = "none"
+                to_state = trans
+                
             event_text = ""
             sass = "Get it!"
             if (trans in ["none:wash", "dry:both"]):
@@ -77,7 +80,7 @@ class Webpusher:
 
             loc = Location.objects.get(id=location)
 
-            for s in Subscription.objects(location=loc).all():
+            for s in Subscription.objects.filter(location=loc).all():
                 sub = json.loads(s.subscription)
                 payload['location'] = loc.nickname
                 push_main(sub,payload)
