@@ -55,6 +55,7 @@ def report(request):
             obj.description = form.cleaned_data['issue']
             obj.code = form.cleaned_data['code']
             obj.location = Location.objects.get(pk=form.cleaned_data['location'].pk)
+            obj.site = obj.location.site
             obj.time = datetime.now(timezone.utc)
             obj.save()
             return render(request,"laundry/report_confirm.html")

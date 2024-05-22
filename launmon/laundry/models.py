@@ -14,6 +14,9 @@ class UserSite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return "%s -> %s"%(self.user.username,self.site.name)
+
 class LocationType(models.Model):
     name = models.TextField()
     def __str__(self):
@@ -119,10 +122,7 @@ class Device(models.Model):
 
 
     def __str__(self):
-        if (self.location is None):
-            return self.device
-        else:
-            return "%s -> (%s: %s)" %(self.device,self.site,self.location) 
+        return self.device
     
     def save(self, *args, **kwargs):
         if (self.location is not None):

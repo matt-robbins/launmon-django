@@ -5,7 +5,6 @@ from django import forms
 from laundry.models import Device,Site,Location,LocationType,Calibration,Event,Rawcurrent,Issue,Subscription,UserSite
 from django.contrib.auth.models import User
 
-
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
@@ -14,9 +13,11 @@ class LocationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        sites = [usersite.site for usersite in UserSite.objects.filter(user=self.current_user)]
+        site_ids = [s.id for s in sites]
 
+        self.fields['site'].queryset = Site.objects.filter(pk__in=site_ids)
         self.fields['device'].queryset = Device.objects.filter(site=self.instance.site)
-
 
         try:
             self.fields['device'].initial = Device.objects.get(location=self.instance)
@@ -42,19 +43,14 @@ class LocationForm(forms.ModelForm):
 
         return super(LocationForm,self).save(commit=commit)
     
-class DeviceForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['location'].queryset = Location.objects.filter(site=self.instance.site)
-
-
-class DeviceInline(admin.TabularInline):
-    # form = DeviceAdminInlineForm
-    model = Device
-
 class LocationAdmin(admin.ModelAdmin):
     form = LocationForm
+    list_display = ("nickname", "site")
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(LocationAdmin, self).get_form(request, obj, **kwargs)
+        form.current_user = request.user
+        return form
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -65,8 +61,27 @@ class LocationAdmin(admin.ModelAdmin):
 
         return qs.filter(site__in=sites)
     
+class DeviceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sites = [usersite.site for usersite in UserSite.objects.filter(user=self.current_user)]
+        site_ids = [s.id for s in sites]
+
+        print(sites)
+        if self.current_user.is_superuser:
+            return
+        
+        self.fields['site'].queryset = Site.objects.filter(pk__in=site_ids)
+        self.fields['location'].queryset = Location.objects.filter(site=self.instance.site)
+    
 class DeviceAdmin(admin.ModelAdmin):
     form=DeviceForm
+    list_display = ("device", "location", "site")
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(DeviceAdmin, self).get_form(request, obj, **kwargs)
+        form.current_user = request.user
+        return form
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -76,9 +91,27 @@ class DeviceAdmin(admin.ModelAdmin):
         sites=[s.site for s in UserSite.objects.filter(user=request.user)]
         return qs.filter(site__in=sites)
 
+class IssueForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sites = [usersite.site for usersite in UserSite.objects.filter(user=self.current_user)]
+        site_ids = [s.id for s in sites]
+
+        print(sites)
+        if self.current_user.is_superuser:
+            return
+        
+        self.fields['site'].queryset = Site.objects.filter(pk__in=site_ids)
+        self.fields['location'].queryset = Location.objects.filter(site=self.instance.site)
 
 class IssueAdmin(admin.ModelAdmin):
+    exclude = ["site","location"]
 
+    list_display = ("location", "description", "code", "site")
+
+    def has_add_permission(self, request):
+        return False
+    
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
