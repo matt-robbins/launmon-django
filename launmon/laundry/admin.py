@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django import forms
-from django_reverse_admin import ReverseModelAdmin
 
 # Register your models here.
 from laundry.models import Device,Site,Location,LocationType,Calibration,Event,Rawcurrent,Issue,Subscription,UserSite
