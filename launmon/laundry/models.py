@@ -28,9 +28,11 @@ class Location(models.Model):
 
     def __str__(self):
         if (self.nickname is not None):
-            return self.nickname
-        
-        return str(self.id)
+            ret = self.nickname
+        else:
+            ret = str(self.id)
+
+        return ret
     
     def write_lastseen(pk=None):
         cache.set("%s_lastseen:%s"%(Location.__name__,pk), datetime.now(tz=timezone.utc))
@@ -95,11 +97,12 @@ class Location(models.Model):
     
 class Device(models.Model):
     device = models.CharField(primary_key=True, blank=True, max_length=16)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT, null=True, blank=True)
+    location = models.OneToOneField(Location, on_delete=models.CASCADE, null=True, blank=True)
     port = models.CharField(blank=True, null=True, max_length=6)
     calibration = models.FloatField(blank=True, null=True)
     cal_pow = models.FloatField(blank=True, null=True)
-    changed = models.DateTimeField(blank=True, null=True, auto_now=True) 
+    changed = models.DateTimeField(blank=True, null=True, auto_now=True)
+    site = models.ForeignKey(Site, on_delete=models.PROTECT, null=True, blank=True)
 
     def cache_write(self):
         key = "%s_%s:%s"%(Device.__name__,Location.__name__,self.device)
@@ -116,10 +119,16 @@ class Device(models.Model):
 
 
     def __str__(self):
-        return self.device
+        if (self.location is None):
+            return self.device
+        else:
+            return "%s -> (%s: %s)" %(self.device,self.site,self.location) 
     
     def save(self, *args, **kwargs):
+        if (self.location is not None):
+            self.site = self.location.site
         super().save(*args, **kwargs)  # Call the "real" save() method.
+
         self.cache_write()
 
 class Calibration(models.Model):
@@ -147,12 +156,18 @@ class Event(models.Model):
 
 class Issue(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    site = models.ForeignKey(Site, on_delete=models.PROTECT, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     code = models.TextField(blank=True, null=True)
     ooo = models.BooleanField(blank=True, null=True)
     time = models.DateTimeField(unique=True, blank=True, null=True)  
     fix_description = models.TextField(blank=True, null=True)
     fix_time = models.DateTimeField(blank=True, null=True) 
+
+    def save(self, *args, **kwargs):
+        if (self.location is not None):
+            self.site = self.location.site
+        super().save(*args, **kwargs)  # Call the "real" save() method.
 
 
 class Subscription(models.Model):
