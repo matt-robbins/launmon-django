@@ -139,26 +139,18 @@ class SimpleSignalProcessor(SignalProcessor):
         self.type = type
         self.state = State.NONE
         self.active_state = State.WASH
-        self.timeout = 20
+        self.timeout = 120
+        self.cycle_timeout = 3600
         if (self.type == 'dryer'):
             self.timeout = 3
             self.active_state = State.DRY
         self.count = 0
+        self.cycle_count = 0
 
     def reset(self):
         self.__init__()
 
     def process_sample(self, sample, only_diff=True):
-
-        # use nan to represent a gap in data
-        if math.isnan(sample):
-            if (self.state == State.NONE):
-                if only_diff:
-                    return None
-                return self.state
-            else:
-                self.reset()
-                return State.NONE
                         
         new_state = self.state
         
@@ -169,6 +161,7 @@ class SimpleSignalProcessor(SignalProcessor):
                 self.count = 0
 
         elif (self.state == self.active_state):
+            self.cycle_count += 1
             if (sample > self.thresh):
                 self.count = 0
             else:
@@ -176,6 +169,10 @@ class SimpleSignalProcessor(SignalProcessor):
             if (sample < self.thresh and self.count > self.timeout):
                 new_state = State.NONE
                 self.count = 0
+                self.cycle_count = 0
+            if (self.cycle_count > self.cycle_timeout):
+                self.cycle_count = 0
+                new_state = State.NONE
 
         if new_state != self.state:
             self.state = new_state
@@ -186,9 +183,9 @@ class SimpleSignalProcessor(SignalProcessor):
         return self.state
 
 
-
 if __name__ == "__main__":
 
+    print(SignalProcessor.__subclasses__())
 
     p = HeuristicSignalProcessor(idle_time=30)
     #p = HeuristicSignalProcessor(spike_th=0.05,spike_max=1,wash_th=0.4,dry_th=4.5,idle_time=20)

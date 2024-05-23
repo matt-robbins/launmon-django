@@ -81,7 +81,7 @@ class DataMuncher:
         self.processors = {}
         now = datetime.now(tz=timezone.utc)
         for loc in self.locations:
-            thresh = loc.get_baseline_current() * 1.5
+            thresh = loc.get_baseline_current() + 0.03
 
             if loc.type.name == 'stack':
                 self.processors[loc.pk] = HeuristicSignalProcessor()
