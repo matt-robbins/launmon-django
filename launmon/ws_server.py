@@ -31,5 +31,5 @@ async def main():
         await rebroadcast()
 
 if __name__ == "__main__":
-    p.psubscribe("status:*","current:*")
+    p.psubscribe("status:*")
     asyncio.run(main())
