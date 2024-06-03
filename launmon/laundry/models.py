@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime, timezone, timedelta
 from django.core.cache import cache
 from django.contrib.auth.models import User
+from Processors.ProcessorFactory import ProcessorFactory
 
 
 class Site(models.Model):
@@ -16,22 +17,38 @@ class UserSite(models.Model):
 
     def __str__(self):
         return "%s -> %s"%(self.user.username,self.site.name)
+    
+class Section(models.Model):
+    name = models.CharField(max_length=32)
+    display_order = models.IntegerField(blank=True,null=True)
+    site = models.ForeignKey(Site,on_delete=models.CASCADE,null=True)
+
+    def __str__(self):
+        return self.name
 
 class LocationType(models.Model):
+    factory = ProcessorFactory()
+
     name = models.TextField()
+    type = models.TextField(default='dryer', choices={'W':"washer", "D": "dryer", "S": "stack"})
+    processor = models.TextField(choices=factory.get_choices(), default=factory.get_default())
     def __str__(self):
         return self.name
 
 class Location(models.Model):
-    nickname = models.TextField(blank=True, null=True)
+    class Meta:
+        ordering = ["site", "section", "display_order", "name"]
+    name = models.CharField(blank=True, null=True, max_length=32)
     tzoffset = models.IntegerField(blank=True, null=True)
     lastseen = models.DateTimeField(blank=True, null=True)
     type = models.ForeignKey(LocationType, on_delete=models.PROTECT, null=True)
-    site = models.ForeignKey(Site, on_delete=models.PROTECT, null=True)
+    site = models.ForeignKey(Site, on_delete=models.PROTECT, null=True,blank=True)
+    section = models.ForeignKey(Section, on_delete=models.PROTECT, null=True,blank=True)
+    display_order = models.IntegerField(blank=True,null=True)
 
     def __str__(self):
-        if (self.nickname is not None):
-            ret = self.nickname
+        if (self.name is not None):
+            ret = self.name
         else:
             ret = str(self.id)
 
@@ -137,6 +154,10 @@ class Calibration(models.Model):
 
 
 class Rawcurrent(models.Model):
+    class Meta:
+        indexes = [
+            models.Index(fields=['time'], name='time_idx'),
+        ]
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     current = models.FloatField(null=True)
     time = models.DateTimeField()

@@ -34,14 +34,19 @@
         --color-ooo: #F28C28;
       }
 
+      .card-text{
+          font-size:12px;
+          text-overflow: ellipsis;
+      }
+
       .machine {
         stroke: black;
         fill: black;
         background-color: var(--color-offline);
         stroke-width: 0;
-        border-radius: 8px;
-        width: 5em;
-        height: 5em;
+        border-radius: 4px;
+        width: 3em;
+        height: 3em;
       }
 
       @media (min-width: 992px) {
@@ -123,7 +128,7 @@
 
     <title>{% block title %} {% endblock %}</title>
   </head>
-  <body>
+  <body style="font-size: small;">
     <nav class="navbar navbar-expand-md navbar-light bg-light ml-2">
       <div class="container-fluid">
         <a class="navbar-brand pl-2" href="{% url 'index' %}">Laundry</a>

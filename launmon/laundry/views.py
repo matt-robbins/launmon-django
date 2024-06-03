@@ -15,18 +15,19 @@ from datetime import datetime, timezone
 def index(request):
     user = request.user
     try:
-        site = UserSite.objects.get(user=user).site
-        locs = Location.objects.filter(site=site).order_by("nickname")
+        sites = [u.site_id for u in UserSite.objects.filter(user=user)]
+        locs = Location.objects.filter(site__in=sites)
     except Exception as e:
+        print(e)
         locs = []
-        site = None
+        sites = None
     
-    context = {"locations": locs, "site": site}
+    context = {"locations": locs, "sites": sites}
 
     return render(request,"laundry/index.html",context)
 
 def index_json(request):
-    locs = Location.objects.order_by("nickname")
+    locs = Location.objects.all()
     jso = []
     for loc in locs:
         try:

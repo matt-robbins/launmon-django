@@ -4,12 +4,11 @@ from .StateSignalProcessor import StateSignalProcessor
 from .SignalProcessor import State
 import os
 import sys
-import importlib.resources
-from pathlib import Path
 
 class ProcessorFactory:
 
     PROCESSORS = {
+        'generic': {'class': SimpleSignalProcessor, 'args': {}},
         'generic_dryer': {'class': SimpleSignalProcessor, 'args': {}},
         'generic_washer': {'class': SimpleSignalProcessor, 'args': {}},
         'whirlpool_washer': {
@@ -37,6 +36,14 @@ class ProcessorFactory:
                 'both_idle_time':30}},
     }
 
+    def get_default(self):
+        return 'generic'
+    
+    def get_choices(self):
+        names = self.PROCESSORS.keys()
+        ret = {n: n.replace('_',' ').title() for n in names}
+        return ret
+
     def get_processor(self,type):
         try:
             return self.PROCESSORS[type]['class'](**self.PROCESSORS[type]['args'])
@@ -62,9 +69,7 @@ class ProcessorFactory:
             return
         
         p = self.get_processor(type)    
-
         directory = os.path.join(os.path.dirname(__file__),'data',type)
-        print(directory)
 
         for file in os.listdir(directory):
             ext = os.path.splitext(file)[1]

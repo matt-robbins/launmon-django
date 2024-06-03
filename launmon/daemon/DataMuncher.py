@@ -1,6 +1,5 @@
 
 from datetime import datetime, timedelta
-from daemon.HeuristicSignalProcessor import HeuristicSignalProcessor, SimpleSignalProcessor
 from daemon.DataSink import CurrentSink, StatusSink
 
 import os.path
@@ -12,6 +11,7 @@ import django
 django.setup()
 
 from laundry.models import Location, Device, Rawcurrent
+from Processors.ProcessorFactory import ProcessorFactory
 
 from asgiref.sync import sync_to_async
 from django.core.cache import cache
@@ -76,16 +76,12 @@ class DataMuncher:
         for device in self.devices:
             device.cache_write()
 
-
         self.lastseen = {}
         self.processors = {}
         now = datetime.now(tz=timezone.utc)
-        for loc in self.locations:
-            thresh = loc.get_baseline_current() + 0.03
+        factory = ProcessorFactory()
 
-            if loc.type.name == 'stack':
-                self.processors[loc.pk] = HeuristicSignalProcessor()
-            else:
-                self.processors[loc.pk] = SimpleSignalProcessor(thresh=thresh,type=loc.type.name)
+        for loc in self.locations:
+            self.processors[loc.pk] = factory.get_processor(loc.type.processor)
             self.lastseen[loc.pk] = now - timedelta(days=1)
 

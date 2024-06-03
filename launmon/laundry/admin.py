@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 
 # Register your models here.
-from laundry.models import Device,Site,Location,LocationType,Calibration,Event,Rawcurrent,Issue,Subscription,UserSite
+from laundry.models import Device,Site,Section,Location,LocationType,Calibration,Event,Rawcurrent,Issue,Subscription,UserSite
 from django.contrib.auth.models import User
 
 class LocationForm(forms.ModelForm):
@@ -45,7 +45,7 @@ class LocationForm(forms.ModelForm):
     
 class LocationAdmin(admin.ModelAdmin):
     form = LocationForm
-    list_display = ("pk", "nickname", "site")
+    list_display = ("pk", "name", "site")
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(LocationAdmin, self).get_form(request, obj, **kwargs)
@@ -121,6 +121,7 @@ class IssueAdmin(admin.ModelAdmin):
         return qs.filter(site__in=sites)
 
 admin.site.register(Site)
+admin.site.register(Section)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
 admin.site.register(Device, DeviceAdmin)
