@@ -119,6 +119,12 @@ class IssueAdmin(admin.ModelAdmin):
         
         sites=[s.site for s in UserSite.objects.filter(user=request.user)]
         return qs.filter(site__in=sites)
+    
+class EventAdmin(admin.ModelAdmin):
+    list_display = ("location","status","time")
+
+class RawcurrentAdmin(admin.ModelAdmin):
+    list_display = ("location","current","time")
 
 admin.site.register(Site)
 admin.site.register(Section)
@@ -126,8 +132,8 @@ admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(Calibration)
-admin.site.register(Event)
-admin.site.register(Rawcurrent)
+admin.site.register(Event, EventAdmin)
+admin.site.register(Rawcurrent,RawcurrentAdmin)
 admin.site.register(Issue, IssueAdmin)
 admin.site.register(Subscription)
 admin.site.register(UserSite)
