@@ -82,7 +82,7 @@ class Webpusher:
 
             for s in Subscription.objects.filter(location=loc).all():
                 sub = json.loads(s.subscription)
-                payload['location'] = loc.nickname
+                payload['location'] = loc.name
                 push_main(sub,payload)
 
             # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
