@@ -11,6 +11,10 @@ class ProcessorFactory:
         'generic': {'class': SimpleSignalProcessor, 'args': {}},
         'generic_dryer': {'class': SimpleSignalProcessor, 'args': {}},
         'generic_washer': {'class': SimpleSignalProcessor, 'args': {}},
+        'speedqueen_washer': {'class': SimpleSignalProcessor, 'args': {
+                'thresh': 0.25,
+                'timeout': 25,
+                'type': 'washer'}},
         'whirlpool_washer': {
             'class': StateSignalProcessor,'args': {'trig_thresh':0.05, 
                 'high_thresh': 0.5, 
@@ -59,6 +63,7 @@ class ProcessorFactory:
                     ret[int(ln)] = State(int(state))
 
         except FileNotFoundError:
+            print("no label file found! %s"%file)
             pass
         return ret
 
@@ -76,7 +81,7 @@ class ProcessorFactory:
             if ext in ['.labels', '.py'] or os.path.isdir(file):
                 continue
             
-            labels = self.read_labels(file+".labels")
+            labels = self.read_labels(os.path.join(directory,file)+".labels")
 
             ds = State.NONE
             s = State.NONE
