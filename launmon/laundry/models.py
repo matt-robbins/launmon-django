@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 from datetime import datetime, timezone, timedelta
 from django.core.cache import cache
 from django.contrib.auth.models import User
@@ -174,6 +174,23 @@ class Event(models.Model):
     status = models.TextField(blank=True, null=True, choices=EVENT_STATUS_CHOICES)
     time = models.DateTimeField(blank=True, null=True) 
 
+    def get_histogram(location, dow):
+        table_name = Event.objects.model._meta.db_table
+        sql = f"""SELECT EXTRACT(HOUR FROM time) AS hour, count(*)/12.0 perhour
+                FROM {table_name} 
+                WHERE location_id=%s 
+                AND EXTRACT(DOW FROM time)=%s 
+                GROUP BY hour ORDER BY hour;
+                """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [location, dow])
+            rows = cursor.fetchall()
+            ret = [0]*24
+            for r in rows:
+                ret[int(r[0])] = float(r[1])
+
+            return ret
 
 class Issue(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
