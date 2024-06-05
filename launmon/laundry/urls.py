@@ -7,12 +7,15 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("/<str:message>", views.index, name="index"),
+    path("details/<str:location>", views.details, name="details"),
     path("json", views.index_json, name="json"),
-    path("report", views.report, name="report"),
+    path("histogram-json", views.histogram_json, name="histogram_json"),
+    path("report/<str:location>", views.report, name="report"),
     path("issues", views.issues, name="issues"),
     path("issues/<str:location>", views.issues, name="issues"),
     path("fix/<str:issue>", views.issue_fix),
-    path("issues/fix/<str:issue>", views.issue_fix),
+    path("issues/fix/<str:issue>", views.issue_fix, name="issue-fix"),
     path("subscribe", views.subscribe, name="subscribe"),
     path("unsubscribe", views.unsubscribe, name="unsubscribe"),
     path("check-subscription", views.check_subscription, name="check-subscription"),

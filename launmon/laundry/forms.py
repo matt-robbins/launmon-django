@@ -11,12 +11,11 @@ class NameForm(forms.Form):
     your_name = forms.CharField(label="Your name", max_length=100)
 
 class ReportForm(forms.Form):
-    location = forms.ModelChoiceField(queryset=Location.objects.order_by("name"))
-    issue = forms.CharField(widget=forms.Textarea())
+    issue = forms.CharField()
     code = forms.CharField()
 
 class FixForm(forms.Form):
-    fix_description = forms.CharField(widget=forms.Textarea())
+    fix_description = forms.CharField()
 
 class RegisterForm(forms.Form):
     """

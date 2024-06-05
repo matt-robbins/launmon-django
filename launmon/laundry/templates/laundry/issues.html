@@ -3,37 +3,48 @@
 {% block content %}
 
 <div class="container w-100 mt-3">
+    <div class="table-responsive">
     <table class="table">
     <thead>
         <tr>
-            <th scope="col">Issue Id#</th>
-            <th scope="col">Time Reported</th>
-            <th scope="col">Location</th>
-            <th scope="col">Description</th>
-            <th scope="col">Code</th>
-            <th scope="col">Fix Description</th>
-            <th scope="col">Time Fixed</th>
+            <th scope="row">Issues</th>
         </tr>
     </thead>
     <tbody>
         {% for issue in issues %}
-            <tr>
-                <th scope="row"> {{ issue.id }}</th>
-                <td>{{ issue.time }}</td>
-                <td>{{ issue.location }}</td>
-                <td>{{ issue.description }}</td>
-                <td>{{ issue.code }}</td>
-                <td>{{ issue.fix_description }}</td>
-                {% if issue.fix_time %}
-                    <td>{{ issue.fix_time }}</td>
-                {% else %}
-                <td><a href="fix/{{ issue.id }}" class="btn btn-primary">Fix</a></td>
-                {% endif %}
-            </tr>
+        <tr>
+            <th scope="row"> {{ issue.id }}</th>
+            <td> {{ issue.time }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Location </th>
+            <td>{{ issue.location }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Description </th>
+            <td>{{ issue.description }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Error Code</th>
+            <td>{{ issue.code }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Fix Description </th>
+            <td>{{ issue.fix_description }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Fix Time </th>
+            {% if issue.fix_time %}
+                <td>{{ issue.fix_time }}</td>
+            {% else %}
+            <td><a href="{% url 'issue-fix' issue.id %}" class="btn btn-primary">Mark Fixed</a></td>
+            {% endif %}
+        </tr>
         {% endfor %}
 
     </tbody>
     </table>
+    </div>
 </div>
 
 

@@ -2,15 +2,15 @@
 var hours = 96
 
 hist = new HourlyHistogram(document.getElementById("histogram"));
-dry_tl = new Timeline(document.getElementById("timeline"), 
-    "drywash",duration=96*3600*1000,tracks=2);
+// dry_tl = new Timeline(document.getElementById("timeline"), 
+//     "drywash",duration=96*3600*1000,tracks=2);
 
-dry_tl.setZoom=16.0
-dry_tl.zoomInButton = document.getElementById("timeline-zin");
-dry_tl.zoomOutButton = document.getElementById("timeline-zout");
+// dry_tl.setZoom=16.0
+// dry_tl.zoomInButton = document.getElementById("timeline-zin");
+// dry_tl.zoomOutButton = document.getElementById("timeline-zout");
 
-chart = new Chart(document.getElementById("graph-canvas"), {});
-chart.realtime = false;
+// chart = new Chart(document.getElementById("graph-canvas"), {});
+// chart.realtime = false;
 
 async function updatePlot(loc,e) {
     var url = '';
@@ -76,13 +76,15 @@ function addData(chart,time,current) {
 
 async function reloadHistogram() {
     tz = new Date().getTimezoneOffset()/60
-    loc = document.getElementById("loc_select").value
     day = document.getElementById("day_select").value
 
-    const url = '/histogram-json?weekday='+day+'&location='+loc+'&tzoff='+tz;
+    const url = window.location.origin+'/laundry/histogram-json?weekday='+day+'&location='+LOCATION;
     const response = await fetch(url);
-    const data = await response.json();
-
+    var data = await response.json();
+    data = data['histogram'];
+    // hack to rotate the array, concatenate 3 copies and slice it.
+    const ldata = data.concat(data, data);
+    data = ldata.slice(data.length+tz,2*data.length+tz)
     hist.draw(data);
 }
 
@@ -134,34 +136,28 @@ function startWebsocket(url) {
 window.addEventListener("load", (event) => {
     tz = new Date().getTimezoneOffset()/60;
     dow = new Date().getDay();
-    loc = document.getElementById("loc_select").value
     document.getElementById("day_select").value = dow;
     
     day = document.getElementById("day_select").value;
 
-    document.getElementById("loc_select").addEventListener("change", (event) => {
-        reloadHistogram();
-        reloadTimeline();
-        updatePlot(loc);
-    });
     document.getElementById("day_select").addEventListener("change", (event) => {
         reloadHistogram();
     });
 
-    for (var tk of document.getElementsByClassName("timeline-track")) {
-        tk.addEventListener("click", (ev) => {
-            if (ev.target.classList.contains("timeline-event")) {
-                return;
-            }
-            updatePlot(loc);
-        });
-    }
+    // for (var tk of document.getElementsByClassName("timeline-track")) {
+    //     tk.addEventListener("click", (ev) => {
+    //         if (ev.target.classList.contains("timeline-event")) {
+    //             return;
+    //         }
+    //         updatePlot(loc);
+    //     });
+    // }
 
     reloadHistogram();
-    reloadTimeline();
+    // reloadTimeline();
 
-    updatePlot(loc);
+    // updatePlot(loc);
 
-    startWebsocket("wss://laundry.375lincoln.nyc/websocket");
+    // startWebsocket("wss://laundry.375lincoln.nyc/websocket");
 
 });

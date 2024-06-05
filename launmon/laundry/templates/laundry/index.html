@@ -1,20 +1,17 @@
 {% extends 'laundry/base.html' %} 
 {% block navbar %}
 <div class="row-1 d-flex align-items-end">
-  <div class="">
-    <a
-      href="report"
-      class="btn btn-primary notify-button"
-      role="button"
-    >
-      Report an Issue
-    </a>
-  </div>
+  
 </div>
 {% endblock %}
 {% block content %}
 <div class="container w-100 mt-3">
-  <div class="col">
+  {% if message != None %}
+  <div class="alert alert-primary alert-dismissible" role="alert">
+    {{ message }} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  <div class="col col-sm col-md-6 offset-md-3">
     {% if sites == None %}
       <div class="col-sm col-md-6 offset-md-3 card mb-3">
         <h4 class="text-center">You Are Not Registered to Any Sites :(</h4>
@@ -22,63 +19,7 @@
       </div>
     {% else %}
       {% for location in locations %}
-      <div class="col-sm col-md-6 card offset-md-3 mb-1">
-        <div
-          class="class-body d-flex flex-row justify-content-between m-2 flex-grow"
-          id="location-{{location.pk}}"
-        >
-          <div class="d-flex flex-column justify-content-between">
-            <div class="row">
-              <h6 class="card-title">{{ location.name | title }}</h6>
-              <p
-                class="card-subtitle text-muted mb-2"
-                data-js-attr="location-updated-at"
-              >
-                {{ location.latest_time }}
-            </p>
-            </div>
-            <div></div>
-            <div class="row-1 d-flex justify-content-between">
-              <div class="">
-                <input
-                  class="btn-check btn-sm notify-button"
-                  type="checkbox"
-                  id="subcheck-{{ location.pk }}"
-                  autocomplete="off"
-                />
-                <label
-                  class="btn btn-sm btn-outline-primary"
-                  for="subcheck-{{ location.pk }}"
-                  ><i class="fa-solid fa-bell"></i></label
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="d-flex flex-row justify-content-end">
-            <div class="m-2">
-              <a
-                class="btn btn-small btn-outline-warning issue-indicator {% if location.latest_issue and not location.latest_issue.ooo %}issue{% endif %}"
-                id="issue-{{ location.pk }}"
-                href="issues/{{ location.pk }}">!</a
-              >
-            </div>
-        
-            <div class="d-flex flex-column justify-content-between">
-              {% if location.type.type == 'D' or location.type.type == 'S' %}
-              <div class="dryer-container pb-2" id="dryer-{{ location.id }}">
-                {% include './svg/dryer.svg' with status=location.latest_status %}
-              </div>
-              {% endif %}
-              {% if location.type.type == 'W' or location.type.type == 'S' %}
-              <div class="washer-container" id="washer-{{ location.id }}">
-                {% include './svg/washer.svg' with status=location.latest_status %}
-              </div>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-      </div>
+        {% include './location.html' with location=location %}
       {% endfor %}
     {% endif %}
   </div>

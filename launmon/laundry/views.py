@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from .models import Location, Issue, Subscription, UserSite
+from .models import Location, Issue, Subscription, UserSite, Event, Rawcurrent
 from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
@@ -13,6 +14,11 @@ from datetime import datetime, timezone
 
 @login_required
 def index(request):
+    try:
+        message = request.GET['message']
+    except Exception:
+        message = None
+
     user = request.user
     try:
         sites = [u.site_id for u in UserSite.objects.filter(user=user)]
@@ -22,7 +28,7 @@ def index(request):
         locs = []
         sites = None
     
-    context = {"locations": locs, "sites": sites}
+    context = {"locations": locs, "sites": sites, "message": message}
 
     return render(request,"laundry/index.html",context)
 
@@ -42,7 +48,22 @@ def index_json(request):
 
     return JsonResponse(jso, safe=False)
 
-def report(request):
+
+def details(request, location=None):
+    print(location)
+    loc = Location.objects.get(pk=location)
+    events = Event.objects.filter(location=loc)
+
+    return render(request,"laundry/details.html", {"location":loc,"events":events, "day":0})
+
+def histogram_json(request):
+    loc = request.GET['location']
+    dow = request.GET['weekday']
+    jso = {"histogram": Event.get_histogram(location=loc,dow=dow)}
+
+    return JsonResponse(jso)
+
+def report(request, location=None):
     form = ReportForm()
     context = {"form": form}
 
@@ -50,16 +71,15 @@ def report(request):
         return render(request,"laundry/report.html", context)
     elif request.method == "POST":
         form = ReportForm(request.POST)
-        print(form)
         if form.is_valid():
             obj = Issue()
             obj.description = form.cleaned_data['issue']
             obj.code = form.cleaned_data['code']
-            obj.location = Location.objects.get(pk=form.cleaned_data['location'].pk)
+            obj.location = Location.objects.get(pk=location)
             obj.site = obj.location.site
             obj.time = datetime.now(timezone.utc)
             obj.save()
-            return render(request,"laundry/report_confirm.html")
+            return HttpResponseRedirect(reverse("index")+'?message=Issue Reported!')
         
 def issues(request,location=None):
     if location is not None:
@@ -84,7 +104,7 @@ def issue_fix(request,issue=None):
             obj.fix_time = datetime.now(timezone.utc)
             obj.save()
 
-            return render(request, "laundry/report_confirm.html")
+            return HttpResponseRedirect(reverse("index")+'?message=Issue Marked Fixed!')
 
     return
 
