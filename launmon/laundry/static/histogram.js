@@ -51,7 +51,11 @@ class HourlyHistogram {
     }
     draw(data) {
         for (var ix in this.bars) {
-            this.bars[ix].style.maxHeight = data[ix]*95+"%";
+            let h = data[ix];
+            if (h > 1) {
+                h = 1;
+            }
+            this.bars[ix].style.maxHeight = h*95+"%";
         }
     }
 }
