@@ -34,6 +34,11 @@
             <div id="histogram" class=""></div>
         </div>
 
+        {% if location.latest_issue != None %}
+            <div class="alert alert-warning mt-1" role="alert">
+               <h6>Notice:</h6> <p>{{ location.latest_issue.description }}</p>
+            </div>
+        {% endif %}
 
         <div class="mt-1">
             <a

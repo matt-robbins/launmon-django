@@ -5,7 +5,7 @@
 </div>
 {% endblock %}
 {% block content %}
-<div class="container w-100 mt-3">
+<div class="w-100">
   {% if message != None %}
   <div class="alert alert-primary alert-dismissible" role="alert">
     {{ message }} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -18,9 +18,17 @@
         <p class="text-center">Try scanning your QR code again, or talk to your property manager or landlord.</p>
       </div>
     {% else %}
+    <ul class="list-group list-group-flush">
       {% for location in locations %}
-        {% include './location.html' with location=location %}
+      
+      {% ifchanged %}
+        <p class="section-header">{{location.section | title }}</p>
+      {% endifchanged %}
+        <li class="list-group-item">
+          {% include './location.html' with location=location %}
+        </li>
       {% endfor %}
+    </ul>
     {% endif %}
   </div>
 </div>

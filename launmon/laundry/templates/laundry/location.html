@@ -1,6 +1,6 @@
-<div class="card mb-1">
+<!-- <div class="card mb-1"> -->
 
-    <div class="class-body d-flex flex-row justify-content-between m-2 flex-grow" id="location-{{location.pk}}">
+    <div class="d-flex justify-content-between" id="location-{{location.pk}}">
 
         <div class="d-flex flex-column justify-content-between">
             <div class="row">
@@ -14,7 +14,7 @@
         <div class="d-flex flex-row justify-content-end">
             <div class="m-1">
                 <a
-                    class="btn btn-sm btn-outline-warning issue-indicator {% if location.latest_issue and not location.latest_issue.ooo %}issue{% endif %}"
+                    class="btn btn-outline-warning issue-indicator {% if location.latest_issue and not location.latest_issue.ooo %}issue{% endif %}"
                     id="issue-{{ location.pk }}"
                     href="{% url 'issues' location.pk %}">
                     <i class="fa-solid fa-triangle-exclamation"></i>
@@ -24,13 +24,13 @@
             <div class="row-1 d-flex justify-content-between">
                 <div class="m-1">
                 <input
-                    class="btn-check btn-sm notify-button"
+                    class="btn-check notify-button"
                     type="checkbox"
                     id="subcheck-{{ location.pk }}"
                     autocomplete="off"
                 />
                 <label
-                    class="btn btn-sm btn-outline-primary"
+                    class="btn btn-outline-primary"
                     for="subcheck-{{ location.pk }}"
                     ><i class="fa-solid fa-bell"></i></label
                 >
@@ -52,4 +52,4 @@
             </a>
         </div>
     </div>
-</div>
+<!-- </div> -->

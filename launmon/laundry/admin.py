@@ -126,8 +126,11 @@ class EventAdmin(admin.ModelAdmin):
 class RawcurrentAdmin(admin.ModelAdmin):
     list_display = ("location","current","time")
 
+class SectionAdmin(admin.ModelAdmin):
+    list_display = ("name","site")
+
 admin.site.register(Site)
-admin.site.register(Section)
+admin.site.register(Section, SectionAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
 admin.site.register(Device, DeviceAdmin)

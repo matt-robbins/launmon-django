@@ -19,6 +19,8 @@ class UserSite(models.Model):
         return "%s -> %s"%(self.user.username,self.site.name)
     
 class Section(models.Model):
+    class Meta:
+        ordering = ["site", "display_order", "name"]
     name = models.CharField(max_length=32)
     display_order = models.IntegerField(blank=True,null=True)
     site = models.ForeignKey(Site,on_delete=models.CASCADE,null=True)

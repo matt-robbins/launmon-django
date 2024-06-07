@@ -25,22 +25,33 @@ function update() {
   updateSubscriptions();
 }
 
+function startWebsocket(url) {
+  var ws = new WebSocket(url);
+
+  ws.onmessage = function(event) {
+      e = JSON.parse(event.data)
+      if (e.status) {
+        console.log("got websocket status message. Reloading")
+        update();
+      }
+  };
+
+  ws.onclose = function() {
+      // connection closed, discard old websocket and create a new one in 5s
+      console.log("websocket closed. Restarting...")
+      ws = null
+      setTimeout(function(){ 
+          startWebsocket(url);
+      }, 5000);
+  };
+}
+
 $(function () {
   window.subscriptions = [];
 
   update();
-  setInterval(function () {
-    update();
-  }, 5000);
 
-  ws = new WebSocket("wss://" + location.host + "/websocket");
-  ws.addEventListener("message", (event) => {
-    console.log("got websocket message. Reloading")
-    e = JSON.parse(event.data);
-    if (e.status) {
-      update();
-    }
-  });
+  startWebsocket("wss://" + location.host + "/websocket")
 
   console.log(window.subscriptionEndpoint);
 
