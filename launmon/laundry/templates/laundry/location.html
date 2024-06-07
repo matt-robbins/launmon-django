@@ -39,9 +39,12 @@
             <a href="{% url 'details' location.pk %}">
                 <div class="d-flex flex-column justify-content-between m-1">
                     {% if location.type.type == 'D' or location.type.type == 'S' %}
-                    <div class="dryer-container pb-2" id="dryer-{{ location.id }}">
+                    <div class="dryer-container" id="dryer-{{ location.id }}">
                     {% include './svg/dryer.svg' with status=location.latest_status %}
                     </div>
+                    {% endif %}
+                    {% if location.type.type == 'S' %}
+                    <div class="pb-1"></div>
                     {% endif %}
                     {% if location.type.type == 'W' or location.type.type == 'S' %}
                     <div class="washer-container" id="washer-{{ location.id }}">
