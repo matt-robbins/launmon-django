@@ -55,6 +55,13 @@ $(function () {
 
   console.log(window.subscriptionEndpoint);
 
+  // app regaining focus on mobile
+  window.addEventListener("visibilitychange", function () {
+    if (document.visibilityState == "visible") {
+      window.location.reload();
+    }
+  })
+
   // set up callbacks for subscribe buttons
   Array.from(document.querySelectorAll('[id^="subcheck-"]')).forEach((btn,ix) => {
     btn.addEventListener("click", (event) => {
