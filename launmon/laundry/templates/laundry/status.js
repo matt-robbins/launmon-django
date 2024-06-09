@@ -8,7 +8,7 @@ function update() {
 
         locdiv
           .find("[data-js-attr='location-updated-at']")
-          .text(`Last updated: ${lastUpdated.toLocaleTimeString()}`);
+          .text(`Last updated: ${timeAgo.format(lastUpdated)}`);
         locdiv
           .find("svg.washer")
           .attr("class", "machine washer " + location.status);
@@ -45,6 +45,9 @@ function startWebsocket(url) {
       }, 5000);
   };
 }
+
+// Create formatter (English).
+const timeAgo = new TimeAgo('en-US')
 
 $(function () {
   window.subscriptions = [];
