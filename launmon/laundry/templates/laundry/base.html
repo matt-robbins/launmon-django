@@ -53,7 +53,7 @@
       .machine {
         stroke: black;
         fill: black;
-        background-color: var(--color-offline);
+        background-color: var(--color-available);
         stroke-width: 0;
         border-radius: 4px;
         width: 3em;
@@ -70,8 +70,8 @@
       .machine.washer.wash, .machine.dryer.dry, .machine.both {
         background-color: var(--color-running);
       }
-      .machine.available, .machine.none {
-        background-color: var(--color-available);
+      .machine.offline {
+        background-color: var(--color-offline);
       }
       .machine.ooo {
         background-color: var(--color-ooo);
