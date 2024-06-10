@@ -143,10 +143,21 @@
       }
 
       .status {
-        background-color: azure;
-        border-width: 1px;
-        border-radius: 5px;
-        border-color: #65b6f0;
+        background-color: var(--color-available);
+        color: #fff;
+        border-width: 5px;
+        border-radius: 0.2em;
+        border-color: #106fb3;
+      }
+      .status.ooo {
+        background-color: var(--color-ooo);
+      }
+      .status.offline {
+        color:#000;
+        background-color: var(--color-offline);
+      }
+      .status.wash .status.dry .status.both {
+        background-color: var(--color-running);
       }
 
       .location-cell.ooo {
