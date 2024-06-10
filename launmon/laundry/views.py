@@ -25,7 +25,6 @@ def index(request):
         sites = [u.site_id for u in UserSite.objects.filter(user=user)]
         locs = Location.objects.filter(site__in=sites)
     except Exception as e:
-        print(e)
         locs = []
         sites = None
     
