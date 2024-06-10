@@ -36,7 +36,12 @@
 
         {% if location.latest_issue != None %}
             <div class="alert alert-warning mt-1" role="alert">
-               <h6>Notice:</h6> <p>{{ location.latest_issue.description }}</p>
+               <h6>Notice:</h6> <p>{{ location.latest_issue.description }} </p>
+               <a class="btn btn-sm btn-warning text-end"
+                    id="issue-{{ location.pk }}"
+                    href="{% url 'issues' location.pk %}">
+                    Mark Fixed
+                </a>
             </div>
         {% endif %}
 
@@ -60,6 +65,9 @@
 <script src="/static/histogram.js"></script>
 <!-- <script src="/static/timeline.js"></script> -->
 <script src="/static/details.js"></script>
+
+{% load static %}
+<script src="{% url 'status.js' %}"></script>
 
 {% endblock %}
 

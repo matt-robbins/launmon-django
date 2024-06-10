@@ -1,0 +1,5 @@
+{% for k,v in map.items %}
+span.status.{{k}}::before {
+    content: "{{v | title}}";
+}
+{% endfor %}

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 import json
 
 from django.conf import settings
@@ -31,6 +32,10 @@ def index(request):
     context = {"locations": locs, "sites": sites, "message": message}
 
     return render(request,"laundry/index.html",context)
+
+@cache_page(60 * 15)
+def status_css(request):
+    return render(request, "laundry/status.css", {'map': Event.EVENT_STATUS_CHOICES}, content_type="text/css")
 
 def index_json(request):
     locs = Location.objects.all()

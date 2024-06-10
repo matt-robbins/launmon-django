@@ -170,11 +170,19 @@ class Event(models.Model):
         "wash": "washing",
         "dry": "drying",
         "both": "both",
-        "none": "idle"
+        "none": "idle",
+        "offline": "offline",
+        "ooo": "out of order"
     }
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     status = models.TextField(blank=True, null=True, choices=EVENT_STATUS_CHOICES)
     time = models.DateTimeField(blank=True, null=True) 
+
+    def status_str(str):
+        try:
+            return Event.EVENT_STATUS_CHOICES[str]
+        except Exception:
+            return "unknown"
 
     def get_histogram(location, dow):
         table_name = Event.objects.model._meta.db_table

@@ -1,25 +1,22 @@
 <!-- <div class="card mb-1"> -->
 
-    <div class="d-flex justify-content-between" id="location-{{location.pk}}">
+    <div class="d-flex justify-content-between location-cell {{location.latest_status}}" id="location-{{location.pk}}" onclick='location.href="{% url 'details' location.pk %}";'>
 
         <div class="d-flex flex-column justify-content-between">
             <div class="row">
-                <h6 class="card-title">{{ location.name | title }}</h6>
-                <p class="card-subtitle text-muted mb-2" data-js-attr="location-updated-at">
-                    {{ location.latest_time }}
+                <h6 class="card-title">{{ location.name | title }} <a
+                    class="issue-indicator {% if location.latest_issue and not location.latest_issue.ooo %}issue{% endif %}"
+                    id="issue-{{ location.pk }}"
+                    href="{% url 'issues' location.pk %}">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </a></h6>
+                <p class="card-subtitle text-muted mb-2">
+                    <span data-js-attr="status-display" class="status {{location.latest_status}}"></span>: <span data-js-attr="location-updated-at">{{ location.latest_time }}</span>
                 </p>
             </div>
         </div>
 
         <div class="d-flex flex-row justify-content-end">
-            <div class="m-1">
-                <a
-                    class="btn btn-outline-warning issue-indicator {% if location.latest_issue and not location.latest_issue.ooo %}issue{% endif %}"
-                    id="issue-{{ location.pk }}"
-                    href="{% url 'issues' location.pk %}">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </a>
-            </div>
 
             <div class="row-1 d-flex justify-content-between">
                 <div class="m-1">
@@ -37,7 +34,7 @@
                 </div>
             </div>
             <a href="{% url 'details' location.pk %}">
-                <div class="d-flex flex-column justify-content-between m-1">
+                <div class="d-flex flex-column justify-content-between align-items-end m-1">
                     {% if location.type.type == 'D' or location.type.type == 'S' %}
                     <div class="dryer-container" id="dryer-{{ location.id }}">
                     {% include './svg/dryer.svg' with status=location.latest_status %}

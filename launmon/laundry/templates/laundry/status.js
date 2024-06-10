@@ -1,3 +1,6 @@
+const status_table = {'none': 'Available','wash': "Washing", 'dry': 'Drying', 'both': 'Running'}
+
+
 function update() {
   fetch(`${$SCRIPT_ROOT}/json`)
     .then((resp) => resp.json())
@@ -5,10 +8,12 @@ function update() {
       status.forEach((location) => {
         const locdiv = $(`#location-${location.location}`);
         const lastUpdated = new Date(`${location.lastseen}`);
-
+        locdiv
+          .find("[data-js-attr='status-display']")
+          .attr("class", "status " + location.status);
         locdiv
           .find("[data-js-attr='location-updated-at']")
-          .text(`Last updated: ${jQuery.timeago(lastUpdated)}`);
+          .text(`${jQuery.timeago(lastUpdated)}`);
         locdiv
           .find("svg.washer")
           .attr("class", "machine washer " + location.status);
@@ -61,7 +66,7 @@ $(function () {
   // app regaining focus on mobile
   window.addEventListener("visibilitychange", function () {
     if (document.visibilityState == "visible") {
-      window.location.reload();
+      update();
     }
   })
 

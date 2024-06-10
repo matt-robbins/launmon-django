@@ -25,4 +25,5 @@ urlpatterns = [
         content_type='application/javascript', )), name='util.js'),
     path('status.js', (TemplateView.as_view(template_name="laundry/status.js", 
         content_type='application/javascript', )), name='status.js'),
+    path('status.css', views.status_css, name='status.css'),
 ]
