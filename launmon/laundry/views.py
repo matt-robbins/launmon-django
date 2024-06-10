@@ -55,11 +55,15 @@ def index_json(request):
 
 
 def details(request, location=None):
-    print(location)
+    try:
+        message = request.GET['message']
+    except Exception:
+        message = None
+
     loc = Location.objects.get(pk=location)
     events = Event.objects.filter(location=loc)
 
-    return render(request,"laundry/details.html", {"location":loc,"events":events, "day":0})
+    return render(request,"laundry/details.html", {"location":loc,"events":events,"day":0,"message": message}, )
 
 def histogram_json(request):
     loc = request.GET['location']
@@ -70,7 +74,14 @@ def histogram_json(request):
 
 def report(request, location=None):
     form = ReportForm()
-    context = {"form": form}
+    try:
+        redirect_url = request.GET['from']
+        print(f"from {redirect_url}")
+    except KeyError:
+        redirect_url = reverse("index")
+
+    context = {"form": form, "next_url": redirect_url}
+
 
     if request.method == "GET":
         return render(request,"laundry/report.html", context)
@@ -84,7 +95,7 @@ def report(request, location=None):
             obj.site = obj.location.site
             obj.time = datetime.now(timezone.utc)
             obj.save()
-            return HttpResponseRedirect(reverse("index")+'?message=Issue Reported!')
+            return HttpResponseRedirect(redirect_url+'?message=Issue Reported!')
         
 def issues(request,location=None):
     if location is not None:
