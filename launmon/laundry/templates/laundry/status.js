@@ -7,13 +7,19 @@ function update() {
     .then((status) => {
       status.forEach((location) => {
         const locdiv = $(`#location-${location.location}`);
-        const lastUpdated = new Date(`${location.lastseen}`);
+        if (location.lastseen === null) {
+          time_text = "unknown time";
+        }
+        else {
+          time_text = jQuery.timeago(new Date(location.lastseen));
+        }
+        //const lastUpdated = new Date(`${location.lastseen}`);
         locdiv
           .find("[data-js-attr='status-display']")
           .attr("class", "status " + location.status);
         locdiv
           .find("[data-js-attr='location-updated-at']")
-          .text(`${jQuery.timeago(lastUpdated)}`);
+          .text(time_text);
         locdiv
           .find("svg.washer")
           .attr("class", "machine washer " + location.status);

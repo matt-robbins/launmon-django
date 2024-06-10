@@ -62,7 +62,8 @@ class Location(models.Model):
     def latest_time(self):
         try:
             return Event.objects.filter(location=self).order_by("-time")[0].time
-        except IndexError:
+        except IndexError as e:
+            print(e)
             return None
     
     def latest_status(self):
