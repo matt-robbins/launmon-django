@@ -27,7 +27,6 @@ function updateSubscriptions() {
         if (registration) {
             registration.pushManager.getSubscription().then((subscription) => {
                 if (subscription === null) {
-                    console.log("subscription is null!")
                     return;
                 }
 

@@ -47,6 +47,7 @@ class Location(models.Model):
     site = models.ForeignKey(Site, on_delete=models.PROTECT, null=True,blank=True)
     section = models.ForeignKey(Section, on_delete=models.PROTECT, null=True,blank=True)
     display_order = models.IntegerField(blank=True,null=True)
+    record_enable = models.BooleanField(default=True)
 
     def __str__(self):
         if (self.name is not None):

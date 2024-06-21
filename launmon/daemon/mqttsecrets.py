@@ -1,3 +1,3 @@
-USER="launtest"
-PASS="test"
+USER="matt"
+PASS=""
 HOST="localhost"

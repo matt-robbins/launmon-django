@@ -1,14 +1,6 @@
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from daemon.DataSink import CurrentSink, StatusSink
-
-import os.path
-from datetime import datetime, timezone
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', '..launmon.settings')
-
-import django
-django.setup()
 
 from laundry.models import Location, Device, Rawcurrent
 from Processors.ProcessorFactory import ProcessorFactory
@@ -20,16 +12,28 @@ from django.core.cache import cache
 OFFLINE_THRESHOLD_S = 10
 
 class DataMuncher:
+    lastseen = {}
+    processors = {}
+    record = {}
 
     @sync_to_async
     def checkOffline(self,time=datetime.now(tz=timezone.utc)):
+
+        self.reload()
         
         for loc in self.locations:
-            td = time - loc.lastseen
+
+            lastseen = cache.get("%s_lastseen:%s"%(Location.__name__,loc.pk))
+            try:
+                td = time - lastseen
+            except TypeError:
+                print(f"location {loc} was never seen")
+                td = timedelta(0)
+                pass
 
             if (td > timedelta(seconds=OFFLINE_THRESHOLD_S)):
                 if (self.event_sink):
-                    self.event_sink.process_data(loc, "offline", time)
+                    self.event_sink.process_data(loc.pk, "offline", time)
     
     @sync_to_async
     def process_sample(self, device, data, time):
@@ -38,12 +42,13 @@ class DataMuncher:
         # print("%s->%s"%(device,loc_id))
         if loc_id is None:
             return
-    
+        
         cache.set("%s_lastseen:%s"%(Location.__name__,loc_id), datetime.now(tz=timezone.utc))
 
         if (self.cur_sink):
-            self.cur_sink.process_data(loc_id,data,time)
+            self.cur_sink.process_data(loc_id,data,time, record=self.record[loc_id])
 
+        # if it's been offline, return status directly
         only_diff = (time - self.lastseen[loc_id]).total_seconds() < OFFLINE_THRESHOLD_S
         self.lastseen[loc_id] = time
 
@@ -65,23 +70,25 @@ class DataMuncher:
         if (self.event_sink):
             self.event_sink.process_data(loc_id, status.name.lower(), time)
 
-
-    def __init__(self, cur_sink=CurrentSink(),event_sink=StatusSink()):
-
+    def reload(self):
         self.locations = Location.objects.all()
         self.devices = Device.objects.all()
-        self.cur_sink = cur_sink
-        self.event_sink = event_sink
 
         for device in self.devices:
             device.cache_write()
 
-        self.lastseen = {}
-        self.processors = {}
         now = datetime.now(tz=timezone.utc)
-        factory = ProcessorFactory()
 
         for loc in self.locations:
-            self.processors[loc.pk] = factory.get_processor(loc.type.processor)
-            self.lastseen[loc.pk] = now - timedelta(days=1)
+            #handle location changes or additions
+            if not loc in self.processors.keys() or self.processors[loc.pk] != loc.type:
+                self.processors[loc.pk] = self.factory.get_processor(loc.type.processor)
+                self.lastseen[loc.pk] = now - timedelta(days=1)
+                self.record[loc.pk] = loc.record_enable
+            
 
+    def __init__(self, cur_sink=CurrentSink(),event_sink=StatusSink()):
+        self.cur_sink = cur_sink
+        self.event_sink = event_sink
+        self.factory = ProcessorFactory()
+        self.reload()

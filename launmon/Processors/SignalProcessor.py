@@ -14,6 +14,7 @@ class SignalProcessor:
     def __init__(self):
         self._state = State.NONE
         self._count = 0
+        self.type = None
 
     def reset(self):
         self._state = State.NONE

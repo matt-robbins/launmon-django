@@ -7,7 +7,6 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("/<str:message>", views.index, name="index"),
     path("details/<str:location>", views.details, name="details"),
     path("json", views.index_json, name="json"),
     path("histogram-json", views.histogram_json, name="histogram_json"),

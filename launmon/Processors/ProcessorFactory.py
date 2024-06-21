@@ -10,7 +10,7 @@ class ProcessorFactory:
     PROCESSORS = {
         'generic': {'class': SimpleSignalProcessor, 'args': {}},
         'generic_dryer': {'class': SimpleSignalProcessor, 'args': {}},
-        'generic_washer': {'class': SimpleSignalProcessor, 'args': {}},
+        'generic_washer': {'class': SimpleSignalProcessor, 'args': {'type': 'washer'}},
         'speedqueen_washer': {'class': SimpleSignalProcessor, 'args': {
                 'thresh': 0.25,
                 'timeout': 25,
@@ -50,7 +50,9 @@ class ProcessorFactory:
 
     def get_processor(self,type):
         try:
-            return self.PROCESSORS[type]['class'](**self.PROCESSORS[type]['args'])
+            p = self.PROCESSORS[type]['class'](**self.PROCESSORS[type]['args'])
+            p.type = type
+            return p
         except KeyError:
             raise ValueError("no processor for machine type '%s'" % type)
 

@@ -57,17 +57,21 @@ function startWebsocket(url) {
   };
 }
 
-// Create formatter (English).
-
+// onload function
 $(function () {
   window.subscriptions = [];
   jQuery("time.timeago").timeago();
 
   update();
 
-  startWebsocket("wss://" + location.host + "/websocket")
+  var timer = setInterval(update, 5000);
 
-  console.log(window.subscriptionEndpoint);
+  if (location.hostname == "localhost") {
+    startWebsocket("ws://" + location.hostname + ":5678")
+  }
+  else {
+    startWebsocket("wss://" + location.host + "/websocket")
+  }
 
   // app regaining focus on mobile
   window.addEventListener("visibilitychange", function () {

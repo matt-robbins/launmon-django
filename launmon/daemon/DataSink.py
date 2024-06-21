@@ -1,12 +1,5 @@
 from redis import Redis
 
-import os.path
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'launmon.settings')
-
-import django
-django.setup()
-
 from laundry.models import Rawcurrent, Event, Location, Device
 from django.db import transaction
 
@@ -38,8 +31,11 @@ class RedisPublisher(Publisher):
 
 class CurrentSink(DataSink):
     # We batch current data to reduce number of db transactions
-    def process_data(self,loc_id,data,time):
+    def process_data(self,loc_id,data,time, record=True):
         self.publisher.publish([self.channel,str(loc_id)],data)
+        if not record:
+            return
+        
         cur = Rawcurrent(current=data,location_id=loc_id,time=time)
         self.buf.append(cur)
 
