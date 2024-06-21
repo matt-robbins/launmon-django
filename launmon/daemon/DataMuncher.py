@@ -43,7 +43,7 @@ class DataMuncher:
         if loc_id is None:
             return
         
-        cache.set("%s_lastseen:%s"%(Location.__name__,loc_id), datetime.now(tz=timezone.utc))
+        cache.set("%s_lastseen:%s"%(Location.__name__,loc_id), time)
 
         if (self.cur_sink):
             self.cur_sink.process_data(loc_id,data,time, record=self.record[loc_id])
