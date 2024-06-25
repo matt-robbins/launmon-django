@@ -21,7 +21,7 @@ def push_main(subscription={},data={}):
     except WebPushException as ex:
         # print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
         # Mozilla returns additional information in the body of the response.
-        raise Exception("web push failed: %s" % ex)
+        print(f"web push failed: {ex}")
     except Timeout:
         pass
 

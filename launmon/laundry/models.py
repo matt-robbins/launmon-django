@@ -64,7 +64,7 @@ class Location(models.Model):
         try:
             return Event.objects.filter(location=self).order_by("-time")[0].time
         except IndexError as e:
-            print(e)
+            print(f"No events ever recorded at location {self}")
             return None
     
     def latest_status(self):

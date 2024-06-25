@@ -28,7 +28,7 @@ class DataMuncher:
                 td = time - lastseen
             except TypeError:
                 print(f"location {loc} was never seen")
-                td = timedelta(0)
+                td = timedelta(seconds=86400)
                 pass
 
             if (td > timedelta(seconds=OFFLINE_THRESHOLD_S)):

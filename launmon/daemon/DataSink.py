@@ -74,7 +74,7 @@ class StatusSink(DataSink):
         event = Event(location=location,status=status,time=time)
         event.save()
 
-        self.publisher.publish([self.channel,location.id], oldstatus+":"+status)
+        self.publisher.publish([self.channel,location.pk], oldstatus+":"+status)
 
     def __init__(self,channel="status", publisher=RedisPublisher()):
         self.channel=channel

@@ -14,28 +14,27 @@ from laundry.models import Device
 from django.core.management.base import BaseCommand, CommandError
 
 async def mqtt_main(muncher):
-    while True:
-        try:
-            async with aiomqtt.Client(secrets.HOST,username=secrets.USER,password=secrets.PASS) as client:
-                
-                await client.subscribe("+/sensor/current/state")
-                async for msg in client.messages:
-                    try:
-                        sample = float(msg.payload.decode())
-                    except ValueError:
-                        print("bad message %s" % msg.payload)
-                        return
-                    device = msg.topic.value.split("/")[0].split('-')[-1]
+    print("calling mqtt_main")
+    async with aiomqtt.Client(secrets.HOST,username=secrets.USER,password=secrets.PASS) as client:
+        
+        await client.subscribe("+/sensor/current/state")
+        async for msg in client.messages:
+            try:
+                sample = float(msg.payload.decode())
+            except ValueError:
+                print("bad message %s" % msg.payload)
+                continue
+            try: 
+                device = msg.topic.value.split("/")[0].split('-')[-1]
+                await muncher.process_sample(device,sample,datetime.now(tz=timezone.utc))
 
-                    await muncher.process_sample(device,sample,datetime.now(tz=timezone.utc))
+            except Device.DoesNotExist:
+                continue
 
-        except Device.DoesNotExist:
-            continue
-
-        except Exception as e:
-            print("yoopsy: %s" % e)
-            traceback.print_exc(file=sys.stdout)
-            await asyncio.sleep(1)
+            except Exception as e:
+                print("yoopsy: %s" % e)
+                traceback.print_exc(file=sys.stdout)
+                await asyncio.sleep(1)
 
         
 

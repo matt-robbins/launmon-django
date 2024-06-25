@@ -1,39 +1,41 @@
 const status_table = {'none': 'Available','wash': "Washing", 'dry': 'Drying', 'both': 'Running'}
 
 
+function update_location(location, status, time) {
+  const locdiv = $(`#location-${location}`);
+  if (location.lastseen === null) {
+    time_text = "unknown time";
+  }
+  else {
+    time_text = jQuery.timeago(time);
+  }
+  //const lastUpdated = new Date(`${location.lastseen}`);
+  locdiv
+    .find("[data-js-attr='status-display']")
+    .attr("class", "status " + status);
+  locdiv
+    .find("[data-js-attr='location-updated-at']")
+    .text(time_text);
+  locdiv
+    .find("svg.washer")
+    .attr("class", "machine washer " + status);
+  locdiv
+    .find("path.washer-center")
+    .attr("class", "washer-center " + status);
+  locdiv
+    .find("svg.dryer")
+    .attr("class", "machine dryer " + status);
+}
+
 function update() {
   fetch(`${$SCRIPT_ROOT}/json`)
     .then((resp) => resp.json())
     .then((status) => {
       status.forEach((location) => {
-        const locdiv = $(`#location-${location.location}`);
-        if (location.lastseen === null) {
-          time_text = "unknown time";
-        }
-        else {
-          time_text = jQuery.timeago(new Date(location.lastseen));
-        }
-        //const lastUpdated = new Date(`${location.lastseen}`);
-        locdiv
-          .find("[data-js-attr='status-display']")
-          .attr("class", "status " + location.status);
-        locdiv
-          .find("[data-js-attr='location-updated-at']")
-          .text(time_text);
-        locdiv
-          .find("svg.washer")
-          .attr("class", "machine washer " + location.status);
-        locdiv
-          .find("path.washer-center")
-          .attr("class", "washer-center " + location.status);
-        locdiv
-          .find("svg.dryer")
-          .attr("class", "machine dryer " + location.status);
-        
+        time = new Date(location.lastseen)
+        update_location(location.location, location.status, new Date(location.lastseen))
       });
     });
-
-  updateSubscriptions();
 }
 
 function startWebsocket(url) {
@@ -42,8 +44,9 @@ function startWebsocket(url) {
   ws.onmessage = function(event) {
       e = JSON.parse(event.data)
       if (e.status) {
-        console.log("got websocket status message. Reloading")
-        update();
+        st = e.status.split(":");
+        st = st[st.length - 1];
+        update_location(e.location,st, new Date());
       }
   };
 

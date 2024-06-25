@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 settings="launmon.settings"
 echo $#
