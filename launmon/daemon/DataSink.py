@@ -60,6 +60,7 @@ class CurrentSink(DataSink):
 class StatusSink(DataSink):
     def process_data(self,loc_id,data,time):
         location = Location.objects.get(pk=loc_id)
+        
         status = data
         try:
             oldstatus = location.event_set.order_by('-time').first().status
@@ -73,6 +74,9 @@ class StatusSink(DataSink):
         
         event = Event(location=location,status=status,time=time)
         event.save()
+
+        if location.is_ooo():
+            return
 
         self.publisher.publish([self.channel,location.pk], oldstatus+":"+status)
 

@@ -3,19 +3,19 @@ const status_table = {'none': 'Available','wash': "Washing", 'dry': 'Drying', 'b
 
 function update_location(location, status, time) {
   const locdiv = $(`#location-${location}`);
-  if (location.lastseen === null) {
-    time_text = "unknown time";
-  }
-  else {
-    time_text = jQuery.timeago(time);
-  }
+  // if (location.lastseen === null) {
+  //   time_text = "unknown time";
+  // }
+  // else {
+  //   time_text = jQuery.timeago(time);
+  // }
   //const lastUpdated = new Date(`${location.lastseen}`);
   locdiv
     .find("[data-js-attr='status-display']")
     .attr("class", "status " + status);
   locdiv
     .find("[data-js-attr='location-updated-at']")
-    .text(time_text);
+    .timeago("update", time)
   locdiv
     .find("svg.washer")
     .attr("class", "machine washer " + status);
@@ -25,6 +25,7 @@ function update_location(location, status, time) {
   locdiv
     .find("svg.dryer")
     .attr("class", "machine dryer " + status);
+
 }
 
 function update() {
@@ -65,9 +66,9 @@ $(function () {
   window.subscriptions = [];
   jQuery("time.timeago").timeago();
 
-  update();
+  //update();
 
-  var timer = setInterval(update, 5000);
+  //var timer = setInterval(update, 5000);
 
   if (location.hostname == "localhost") {
     startWebsocket("ws://" + location.hostname + ":5678")

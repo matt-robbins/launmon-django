@@ -14,8 +14,8 @@
                     
                 </h6>
                 <p class="card-subtitle text-muted mb-2">
-                    <span data-js-attr="status-display" class="badge text-bg-info status {{location.latest_status}}"></span> 
-                    <span data-js-attr="location-updated-at">{{ location.latest_time }}</span>
+                    <span data-js-attr="status-display" class="status {{location.latest_status}}"></span> 
+                    <time data-js-attr="location-updated-at" class="timeago" datetime="{{ location.latest_time.isoformat }}"></time>
                 </p>
             </div>
         </div>

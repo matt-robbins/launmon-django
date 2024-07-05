@@ -57,10 +57,18 @@ class Location(models.Model):
 
         return ret
     
+    def is_ooo(self):
+        issue = self.latest_issue()
+        return (issue is not None and issue.ooo == True)
+    
     def write_lastseen(pk=None):
         cache.set("%s_lastseen:%s"%(Location.__name__,pk), datetime.now(tz=timezone.utc))
 
     def latest_time(self):
+        issue = self.latest_issue()
+        if (issue is not None and issue.ooo == True):
+            return issue.time
+        
         try:
             return Event.objects.filter(location=self).order_by("-time")[0].time
         except IndexError as e:
