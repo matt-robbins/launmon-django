@@ -65,7 +65,7 @@ class DataMuncher:
             data = pow(data,cpow)
 
         status = self.processors[loc_id].process_sample(data*cal, only_diff=only_diff)
-        print(status)
+
         if status is None:
             return
         
