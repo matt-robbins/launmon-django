@@ -41,6 +41,7 @@ class DataMuncher:
                            
         # print("%s->%s"%(device,loc_id))
         if loc_id is None:
+            print(f"device {device} not in cache")
             return
         
         cache.set("%s_lastseen:%s"%(Location.__name__,loc_id), time)
@@ -64,6 +65,7 @@ class DataMuncher:
             data = pow(data,cpow)
 
         status = self.processors[loc_id].process_sample(data*cal, only_diff=only_diff)
+        print(status)
         if status is None:
             return
         
@@ -81,7 +83,9 @@ class DataMuncher:
 
         for loc in self.locations:
             #handle location changes or additions
-            if not loc in self.processors.keys() or self.processors[loc.pk] != loc.type:
+            if not loc.pk in self.processors.keys() or self.processors[loc.pk].type != loc.type.processor:
+                print(f"setting up processor for location {loc}")
+                
                 self.processors[loc.pk] = self.factory.get_processor(loc.type.processor)
                 self.lastseen[loc.pk] = now - timedelta(days=1)
                 self.record[loc.pk] = loc.record_enable

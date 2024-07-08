@@ -22,6 +22,7 @@ def push_main(subscription={},data={}):
         # print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
         # Mozilla returns additional information in the body of the response.
         print(f"web push failed: {ex}")
+        Subscription.objects.get(subscription=subscription).delete()
     except Timeout:
         pass
 
