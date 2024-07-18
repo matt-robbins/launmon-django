@@ -46,6 +46,10 @@ def index_json(request):
             datestr = None
 
         jso.append({"location": loc.pk, 
+                    "name": loc.name,
+                    "site": loc.site,
+                    "section": loc.section,
+                    "type": loc.type,
                     "status": loc.latest_status(), 
                     "issues": loc.latest_issue() is not None, 
                     "lastseen": datestr})
