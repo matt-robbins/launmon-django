@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-dl#f5oi78q3+h(@si8kxsx=y1cg!fv4yt6k0%*@4+4llx3!!tq
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
-                 "launmon.ddns.net"]
+                 "launmon.ddns.net",
+                 "laundry.375lincoln.nyc"]
 
 
 # Application definition

@@ -13,7 +13,7 @@ trap 'pkill -P $$; exit' SIGINT SIGTERM
 
 ./manage.py rundaemon --settings=$settings &
 ./manage.py runpusher --settings=$settings &
-./manage.py runserver --settings=$settings &
+#./manage.py runserver --settings=$settings &
 python ./ws_server.py &
 
 wait
