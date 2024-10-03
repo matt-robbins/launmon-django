@@ -1,20 +1,3 @@
-const publicVapidKey = 'BCFxaPZEymM57yWrlIPuFkMdSsQjkClmmAnVfHqKVaDtGnQ_t5uA8Yq2B0mm7GxpsNRLmqKSQIr-vdxFkSRCVQc';
-
-// Copied from the web-push documentation
-const urlBase64ToUint8Array = (base64String) => {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
-
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-};
 
 function askPermission() {
     return new Promise(function (resolve, reject) {
@@ -69,13 +52,17 @@ window.subscribe = async (machine=4,unsubscribe=false) => {
     console.log(subscription);
     if(subscription === null){
         // Subscribe to push notifications
+
+        const res = await fetch("{% url 'vapid-pubkey' %}");
+        console.log(res);
+        const vapid_server_key = await res.text();
+
         subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+            applicationServerKey: vapid_server_key,
         });
 
         console.log("subscription: " + subscription)
-
     }
 
     console.log("unsubscribe="+unsubscribe)

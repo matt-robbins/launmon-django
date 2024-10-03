@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path("", views.index, name="index"),
     path("details/<str:location>", views.details, name="details"),
+    path("vapid-pubkey", views.vapid_pubkey, name="vapid-pubkey"),
     path("json", views.index_json, name="json"),
     path("histogram-json", views.histogram_json, name="histogram_json"),
     path("report/<str:location>", views.report, name="report"),

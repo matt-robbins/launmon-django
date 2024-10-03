@@ -5,6 +5,8 @@ from requests.exceptions import Timeout
 
 from laundry.models import Location, Subscription
 
+import laundry.vapidsecrets as vapidsecrets
+
 import redis
 import json
 
@@ -13,9 +15,9 @@ def push_main(subscription={},data={}):
         webpush(
             subscription_info=subscription,
             data=json.dumps(data),
-            vapid_private_key="m1Wni8qP-jjDa0jPaczGSZRsulQHAm5olCv7bXO81Go",
+            vapid_private_key=vapidsecrets.PRIVKEY,
             vapid_claims={
-                    "sub": "mailto:matthew.robbins@gmail.com",
+                    "sub": vapidsecrets.EMAIL,
                 },
                 timeout=1)
     except WebPushException as ex:

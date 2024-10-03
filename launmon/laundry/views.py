@@ -12,6 +12,7 @@ from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
 
+from laundry import vapidsecrets
 
 @login_required
 def index(request):
@@ -31,6 +32,9 @@ def index(request):
     context = {"locations": locs, "sites": sites, "message": message}
 
     return render(request,"laundry/index.html",context)
+
+def vapid_pubkey(request):
+    return HttpResponse(vapidsecrets.PUBKEY)
 
 @cache_page(60 * 15)
 def status_css(request):
