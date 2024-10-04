@@ -26,6 +26,24 @@ function update_location(location, status, time) {
     .find("svg.dryer")
     .attr("class", "machine dryer " + status);
 
+  const li = document.getElementById("li-"+location)
+
+  if (li != null) {
+    li.addEventListener('click', (e) => {
+      console.log("clicked!")
+      console.log(e.target.nodeName)
+      e.stopPropagation();
+  
+      if (e.target.nodeName != 'DIV') {
+        console.log("got an INPUT")
+        
+      }
+      else {
+        console.log("navigating!")
+        window.location.href = "details/" + location;
+      }
+    })
+  }
 }
 
 function update() {
@@ -66,7 +84,7 @@ $(function () {
   window.subscriptions = [];
   jQuery("time.timeago").timeago();
 
-  //update();
+  update();
 
   //var timer = setInterval(update, 5000);
 

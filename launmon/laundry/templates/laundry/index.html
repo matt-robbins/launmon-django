@@ -24,7 +24,7 @@
       {% ifchanged %}
         <p class="section-header">{{location.section | title }}</p>
       {% endifchanged %}
-        <li class="list-group-item">
+        <li class="list-group-item" id="li-{{location.pk}}" data-loc="{{location.pk}}">
           {% include './location.html' with location=location %}
         </li>
       {% endfor %}

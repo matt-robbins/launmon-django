@@ -24,7 +24,6 @@ async def rebroadcast():
             packet = {"location": machine, ch: data}
 
             websockets.broadcast(CONNECTIONS, json.dumps(packet))
-        await asyncio.sleep(0.1)
 
 async def main():
     async with websockets.serve(register, "localhost", 5678):
