@@ -129,6 +129,9 @@ class RawcurrentAdmin(admin.ModelAdmin):
 class SectionAdmin(admin.ModelAdmin):
     list_display = ("name","site")
 
+class UserSiteAdmin(admin.ModelAdmin):
+    list_display = ("user", "site", "sesame_key")
+
 admin.site.register(Site)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Location, LocationAdmin)
@@ -139,5 +142,5 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(Rawcurrent,RawcurrentAdmin)
 admin.site.register(Issue, IssueAdmin)
 admin.site.register(Subscription)
-admin.site.register(UserSite)
+admin.site.register(UserSite, UserSiteAdmin)
 

@@ -32,7 +32,9 @@
                 {% if issue.fix_time %}
                     <td>{{ issue.fix_time }}</td>
                 {% else %}
+                {% if request.user.is_staff %}
                 <td><a href="{% url 'issue-fix' issue.id %}" class="btn btn-primary">Mark Fixed</a></td>
+                {% endif %}
                 {% endif %}
             </tr>
             {% endfor %}

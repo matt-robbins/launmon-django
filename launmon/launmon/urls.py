@@ -23,6 +23,7 @@ from sesame.views import LoginView
 
 
 urlpatterns = [
+    path('', include("laundry.urls")),
     path('admin/', admin.site.urls),
     path('accounts/', include("django.contrib.auth.urls")),
     path("laundry/", include("laundry.urls")),

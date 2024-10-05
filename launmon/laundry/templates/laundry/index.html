@@ -1,8 +1,28 @@
 {% extends 'laundry/base.html' %} 
 {% block navbar %}
 <div class="row-1 d-flex align-items-end">
-  
 </div>
+
+{% if sites|length > 1 %}
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+  <ul class="navbar-nav">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{site.name}}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+        {% for site in sites %}
+        <li><a class="dropdown-item" href="?site={{site.pk}}">{{site.name}}</a></li>
+        {% endfor %}
+      </ul>
+    </li>
+  </ul>
+</div>
+{% endif %}
+
 {% endblock %}
 {% block content %}
 <div class="w-100">
@@ -12,7 +32,7 @@
   </div>
   {% endif %}
   <div class="col col-sm col-md-6 offset-md-3">
-    {% if sites == None %}
+    {% if site == None %}
       <div class="col-sm col-md-6 offset-md-3 card mb-3">
         <h4 class="text-center">You Are Not Registered to Any Sites :(</h4>
         <p class="text-center">Try scanning your QR code again, or talk to your property manager or landlord.</p>

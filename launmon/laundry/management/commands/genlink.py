@@ -13,7 +13,7 @@ class Command(BaseCommand):
         s = get_query_string(user)
 
         self.stdout.write(
-            self.style.SUCCESS('Here is your magic link arg: %s' % s)
+            self.style.SUCCESS('Here is your magic link arg:')
         )
         print(s)
 

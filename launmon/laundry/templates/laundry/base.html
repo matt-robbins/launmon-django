@@ -173,10 +173,13 @@
   <body style="font-size: small;">
     <nav class="navbar navbar-expand-md navbar-light bg-light ml-2">
       <div class="container-fluid">
-        <a class="navbar-brand pl-2" href="{% if next_url %}{{next_url}}{% else %}{% url 'index' %}{% endif %}">Laundry</a>
-
+        <a class="navbar-brand pl-2" href="{% if next_url %}{{next_url}}{% else %}{% url 'index' %}{% endif %}">
+          Laundry
+        </a>
         <!--<a class="navbar-expand-md" href="/histogram">Details</a>-->
         {% block navbar %}{% endblock %}
+        <a class="nav-link" href="{% url 'admin:index' %}">admin</a>
+
       </div>
     </nav>
 

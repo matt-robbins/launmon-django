@@ -3,6 +3,7 @@ from datetime import datetime, timezone, timedelta
 from django.core.cache import cache
 from django.contrib.auth.models import User
 from Processors.ProcessorFactory import ProcessorFactory
+from sesame.utils import get_query_string
 
 
 class Site(models.Model):
@@ -17,6 +18,9 @@ class UserSite(models.Model):
 
     def __str__(self):
         return "%s -> %s"%(self.user.username,self.site.name)
+    @property
+    def sesame_key(self):
+        return get_query_string(self.user)
     
 class Section(models.Model):
     class Meta:

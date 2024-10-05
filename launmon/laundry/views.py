@@ -7,7 +7,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from .models import Location, Issue, Subscription, UserSite, Event, Rawcurrent
+from .models import Location, Issue, Subscription, UserSite, Site, Event, Rawcurrent
 from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
@@ -21,15 +21,39 @@ def index(request):
     except Exception:
         message = None
 
+    try:
+        siteid = request.GET['site']
+        request.session["site"] = siteid
+    except Exception:
+        siteid = None
+
+    print(f"siteid={siteid}")
+
     user = request.user
     try:
         sites = [u.site_id for u in UserSite.objects.filter(user=user)]
-        locs = Location.objects.filter(site__in=sites)
+        qs = Site.objects.filter(pk__in=sites)
+        sites = qs.all()
+        if siteid is not None:
+            site = Site.objects.filter(id=siteid).first()
+        else:
+            try:
+                site = Site.objects.filter(id=request.session['site']).first()
+            except Exception:
+                site = qs.first()
+
+        locs = Location.objects.filter(site=site)
+        print(site)
     except Exception as e:
+        print(e)
         locs = []
         sites = None
+        site = None
+
+    print(f"sites={sites}")
+    print(f"site={site}")
     
-    context = {"locations": locs, "sites": sites, "message": message}
+    context = {"locations": locs, "sites": sites, "site": site, "message": message}
 
     return render(request,"laundry/index.html",context)
 

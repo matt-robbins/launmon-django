@@ -41,14 +41,18 @@
         </div>
 
         {% if location.latest_issue != None %}
+        
             <div class="alert alert-warning mt-1" role="alert">
                <h6>Notice:</h6> <p>{{ location.latest_issue.description }} </p>
+               {% if request.user.is_staff %}
                <a class="btn btn-sm btn-warning text-end"
                     id="issue-{{ location.pk }}"
                     href="{% url 'issues' location.pk %}">
                     Mark Fixed
                 </a>
+                {% endif %}
             </div>
+            
         {% endif %}
 
         <div class="mt-1">
