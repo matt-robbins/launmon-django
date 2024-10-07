@@ -3,7 +3,7 @@ from django import forms
 from .models import Location, Issue
 
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from Accounts.models import User
 from django.contrib.auth import authenticate, login
 
 

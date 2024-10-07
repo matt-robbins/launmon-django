@@ -1,7 +1,7 @@
 from django.db import models, connection
 from datetime import datetime, timezone, timedelta
 from django.core.cache import cache
-from django.contrib.auth.models import User
+from Accounts.models import User
 from Processors.ProcessorFactory import ProcessorFactory
 from sesame.utils import get_query_string
 

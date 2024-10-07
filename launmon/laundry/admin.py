@@ -3,7 +3,9 @@ from django import forms
 
 # Register your models here.
 from laundry.models import Device,Site,Section,Location,LocationType,Calibration,Event,Rawcurrent,Issue,Subscription,UserSite
-from django.contrib.auth.models import User
+
+from django.contrib.auth.admin import UserAdmin
+from Accounts.models import User
 
 class LocationForm(forms.ModelForm):
     class Meta:
@@ -143,4 +145,5 @@ admin.site.register(Rawcurrent,RawcurrentAdmin)
 admin.site.register(Issue, IssueAdmin)
 admin.site.register(Subscription)
 admin.site.register(UserSite, UserSiteAdmin)
+admin.site.register(User, UserAdmin)
 
