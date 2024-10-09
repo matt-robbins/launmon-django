@@ -15,6 +15,7 @@ urlpatterns = [
     path("issues", views.issues, name="issues"),
     path("issues/<str:location>", views.issues, name="issues"),
     path("fix/<str:issue>", views.issue_fix),
+    path("add-site", views.add_site, name="add-site"),
     path("issues/fix/<str:issue>", views.issue_fix, name="issue-fix"),
     path("subscribe", views.subscribe, name="subscribe"),
     path("unsubscribe", views.unsubscribe, name="unsubscribe"),

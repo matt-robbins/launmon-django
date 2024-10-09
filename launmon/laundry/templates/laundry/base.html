@@ -35,6 +35,16 @@
         --color-ooo-bg: #fdf3e8;
       }
 
+      .icon {
+        max-width: 1em;
+        max-height: 1em;
+      }
+
+      .navbar-toggle .icon-bar{
+        width: 20px !important;
+        height: 10px !important;
+      }
+
       .card-text{
           font-size:12px;
           text-overflow: ellipsis;
@@ -171,16 +181,56 @@
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body style="font-size: small;">
-    <nav class="navbar navbar-expand-md navbar-light bg-light ml-2">
+    <nav class="navbar sticky-top navbar-light bg-light ml-2">
       <div class="container-fluid">
         <a class="navbar-brand pl-2" href="{% if next_url %}{{next_url}}{% else %}{% url 'index' %}{% endif %}">
+        {% if not request.resolver_match.view_name == 'index' %}
+          <i class="fa-solid fa-chevron-left"></i>
+        {% elif sites %}
+          {{ site.name | title }}
+        {% else %}
           Laundry
+        {% endif %}
         </a>
-        <!--<a class="navbar-expand-md" href="/histogram">Details</a>-->
-        {% block navbar %}{% endblock %}
-        <!-- <a class="nav-link" href="{% url 'admin:index' %}">admin</a> -->
+        <!-- <image class="icon nav-item" src="/static/icons/apple-touch-icon-57x57.png"></image> -->
+        {% block navbar %}
 
+        {% endblock %}
+        
+
+        <button class="navbar-toggler" type="button button-sm" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+          <ul class="navbar-nav">
+            {% if sites|length > 1 %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Change Site
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                {% for site in sites %}
+                <li><a class="dropdown-item" href="?site={{site.pk}}">{{site.name}}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endif %}
+            {% if request.user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'account_logout' %}">Logout</a>
+            </li>
+        
+          </ul>
+        </div>
+        
       </div>
+
+      
     </nav>
 
     <!-- Optional JavaScript -->
@@ -214,6 +264,13 @@
 
     <script src="{% url 'util.js' %}"></script>
     <script type="module" src="{% url 'webpush.js' %}"></script>
-    {% block content %}{% endblock %}
+    <div class="container w-100 mt-3">
+      {% block content %}{% endblock %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <footer class="footer fixed-bottom bg-light p-3">
+    </footer>
+    {% endif %}
   </body>
 </html>

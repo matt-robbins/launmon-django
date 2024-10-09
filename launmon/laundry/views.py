@@ -7,7 +7,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from .models import Location, Issue, Subscription, UserSite, Site, Event, Rawcurrent
+from .models import Location, Issue, Subscription, UserSite, Site, Event
 from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
@@ -53,7 +53,7 @@ def index(request):
     print(f"sites={sites}")
     print(f"site={site}")
     
-    context = {"locations": locs, "sites": sites, "site": site, "message": message}
+    context = {"locations": locs, "sites": sites, "site": site, "message": message, "message_type": 0}
 
     return render(request,"laundry/index.html",context)
 
@@ -154,6 +154,33 @@ def issue_fix(request,issue=None):
             return HttpResponseRedirect(reverse("index")+'?message=Issue Marked Fixed!')
 
     return
+
+def add_site(request):
+    userSite = UserSite()
+    user = request.user
+    print(user)
+    try:
+        sitekey = request.GET['site-key']
+    except Exception:
+        sitekey = None
+
+    if not user.is_authenticated:
+        return HttpResponseRedirect(reverse('login'))
+    
+    if sitekey is None:
+        return HttpResponseRedirect(reverse('index')+"?message=You don't have permission to add this site!")
+    
+    
+    us = UserSite()
+    us.user = user
+    us.site = Site.objects.get(pk=sitekey)
+    try:
+        us.save()
+    except Exception as e:
+        print(e)
+
+    return HttpResponseRedirect(reverse('index')+f'?message=Added {us.site.name}!')
+
 
 def subscribe(request):
     if request.method == 'POST':

@@ -25,7 +25,7 @@ from sesame.views import LoginView
 urlpatterns = [
     path('', include("laundry.urls")),
     path('admin/', admin.site.urls),
-    path('accounts/', include("django.contrib.auth.urls")),
+    path('accounts/', include("allauth.urls")),
     path("laundry/", include("laundry.urls")),
     path("sesame/login/", LoginView.as_view(), name="sesame-login"),
     path('sw.js', (TemplateView.as_view(template_name="laundry/sw.js", 
