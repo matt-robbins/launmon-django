@@ -1,0 +1,13 @@
+[Unit]
+Description=WSGI instance to serve the laundry monitor
+After=network.target
+
+[Service]
+User=launy
+Group=www-data
+WorkingDirectory=/home/launy/code/launmon-django
+Environment="PATH=/home/launy/code/launmon-django/env/bin"
+ExecStart=/home/launy/code/launmon-django/launmon/run_wsgi.sh
+
+[Install]
+WantedBy=multi-user.target

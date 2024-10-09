@@ -1,0 +1,18 @@
+[Unit]
+Description=launmon packet distributor
+After=network.target
+StartLimitIntervalSec=0[Service]
+Type=simple
+User=launy
+
+[Service]
+User=launy
+Group=www-data
+WorkingDirectory=/home/launy/code/launmon
+Environment="PATH=/home/launy/code/launmon/env/bin"
+ExecStart=python3 ws_server.py
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
