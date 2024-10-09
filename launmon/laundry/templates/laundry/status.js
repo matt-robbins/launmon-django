@@ -30,12 +30,11 @@ function update_location(location, status, time) {
 
   if (li != null) {
     li.addEventListener('click', (e) => {
-      console.log("clicked!")
-      console.log(e.target.nodeName)
       e.stopPropagation();
   
-      if (e.target.nodeName != 'DIV') {
-        console.log("got an INPUT")
+      if (e.target.classList.contains('no-nav')) {
+        console.log("not navigating");
+        console.log(e.target);
         
       }
       else {
