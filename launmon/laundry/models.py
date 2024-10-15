@@ -22,6 +22,9 @@ class UserSite(models.Model):
     def sesame_key(self):
         return get_query_string(self.user)
     
+    class Meta:
+        indexes = [models.Index(name='user_site_index', fields=['user','site'],)]
+    
 class Section(models.Model):
     class Meta:
         ordering = ["site", "display_order", "name"]
@@ -203,6 +206,7 @@ class Event(models.Model):
         sql = f"""SELECT EXTRACT(HOUR FROM time) AS hour, count(*)/12.0 perhour
                 FROM {table_name} 
                 WHERE location_id=%s 
+                AND status IN ('wash','dry','both','none')
                 AND EXTRACT(DOW FROM time)=%s 
                 GROUP BY hour ORDER BY hour;
                 """
