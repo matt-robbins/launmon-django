@@ -204,9 +204,12 @@ class Event(models.Model):
     def get_histogram(location, dow):
         table_name = Event.objects.model._meta.db_table
         sql = f"""SELECT EXTRACT(HOUR FROM time) AS hour, count(*)/12.0 perhour
-                FROM {table_name} 
-                WHERE location_id=%s 
-                AND status IN ('wash','dry','both','none')
+                FROM (
+                    SELECT time, status, LAG(status,1) OVER ( ORDER BY time ) prev FROM {table_name} 
+                    WHERE location_id=%s
+                ) events 
+                WHERE status IN ('wash','dry','both','none')
+                AND prev IN ('wash','dry','both','none')
                 AND EXTRACT(DOW FROM time)=%s 
                 GROUP BY hour ORDER BY hour;
                 """
