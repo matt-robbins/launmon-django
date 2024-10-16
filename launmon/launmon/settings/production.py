@@ -44,3 +44,5 @@ EMAIL_PASSWORD = "f7s233#fTdR*Ldb"
 # Cookies
 ACCOUNT_SESSION_REMEMBER = True
 SESSION_COOKIE_AGE = 4000000000
+
+STATIC_ROOT = "/var/www/launmon-django"
