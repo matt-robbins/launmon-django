@@ -3,7 +3,7 @@
 uwsgi --chdir=/home/launy/code/launmon-django/launmon \
     --plugins python3\
     --module=launmon.wsgi:application \
-    --env DJANGO_SETTINGS_MODULE=launmon.settings_prod \
+    --env DJANGO_SETTINGS_MODULE=launmon.settings.production \
     --master --pidfile=/tmp/launmon-master.pid \
     --socket=/tmp/launmon-django.sock \
     --chmod-socket=666 \

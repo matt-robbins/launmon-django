@@ -3,7 +3,11 @@
     {% for issue in issues %}
     <table class="table">
         <thead>
+            {% if issue.fix_time %}
             <tr class="table-primary">
+            {% else %}
+            <tr class="table-danger">
+            {% endif %}
                 <th scope="col">Issue #</th>
                 <td>{{ issue.pk }}</td>
             </tr>

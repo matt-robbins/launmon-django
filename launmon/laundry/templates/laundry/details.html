@@ -53,13 +53,16 @@
         
     {% endif %}
 
-    <div class="mt-1">
+    <div class="mt-1 d-flex justify-content-between">
         <a
         href="{% url 'report' location.pk %}?from={{request.path}}"
         class="btn btn-primary notify-button"
         role="button"
         >
         Report an Issue
+        </a>
+        <a href="{% url 'issues' location.pk %}?from={{request.path}}">
+            All Issues
         </a>
     </div>
 </div>

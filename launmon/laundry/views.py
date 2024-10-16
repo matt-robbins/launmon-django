@@ -14,6 +14,15 @@ from datetime import datetime, timezone
 
 from laundry import vapidsecrets
 
+def get_back_link(request):
+    try:
+        redirect_url = request.GET['from']
+        print(f"from {redirect_url}")
+    except KeyError:
+        redirect_url = reverse("index")
+
+    return redirect_url
+
 @login_required
 def index(request):
     try:
@@ -105,14 +114,8 @@ def histogram_json(request):
 
 def report(request, location=None):
     form = ReportForm()
-    try:
-        redirect_url = request.GET['from']
-        print(f"from {redirect_url}")
-    except KeyError:
-        redirect_url = reverse("index")
-
+    redirect_url = get_back_link(request)
     context = {"form": form, "next_url": redirect_url}
-
 
     if request.method == "GET":
         return render(request,"laundry/report.html", context)
@@ -133,7 +136,9 @@ def issues(request,location=None):
         issues = Issue.objects.filter(location=location).order_by("-time")
     else:
         issues = Issue.objects.order_by("-time")
-    context = {"issues": issues}
+
+    redirect_url = get_back_link(request)
+    context = {"issues": issues, "next_url": redirect_url}
     return render(request,"laundry/issues.html", context)
 
 def issue_fix(request,issue=None):

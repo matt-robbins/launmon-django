@@ -7,7 +7,20 @@ User=launy
 Group=www-data
 WorkingDirectory=/home/launy/code/launmon-django
 Environment="PATH=/home/launy/code/launmon-django/env/bin"
-ExecStart=/home/launy/code/launmon-django/launmon/run_wsgi.sh
+ExecStart=/home/launy/code/launmon-django/env/bin/uwsgi --chdir=/home/launy/code/launmon-django/launmon \
+    --plugins python3\
+    --module=launmon.wsgi:application \
+    --env DJANGO_SETTINGS_MODULE=launmon.settings.production \
+    --master --pidfile=/tmp/launmon-master.pid \
+    --socket=/tmp/launmon-django.sock \
+    --chmod-socket=666 \
+    --uid=www-data \
+    --gid=www-data \
+    --processes=2 \
+    --harakiri=20 \
+    --max-requests=5000 \
+    --vacuum \
+    --home=/home/launy/code/launmon-django/env
 
 [Install]
 WantedBy=multi-user.target
