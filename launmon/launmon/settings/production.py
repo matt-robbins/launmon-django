@@ -1,4 +1,5 @@
 from launmon.settings.base import *
+from launmon.settings.secrets import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'tfamt$5c@(_efm_v9#7-5uwwx7e&*d=h52+*s8+*l22kyzbi&z'
@@ -38,8 +39,6 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.porkbun.com"
 EMAIL_PORT = 587
-EMAIL_USER = "admin@375lincoln.nyc"
-EMAIL_PASSWORD = "f7s233#fTdR*Ldb"
 
 # Cookies
 ACCOUNT_SESSION_REMEMBER = True
