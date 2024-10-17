@@ -222,6 +222,9 @@ class Event(models.Model):
                 ret[int(r[0])] = float(r[1])
 
             return ret
+        
+    class Meta:
+        indexes = [models.Index(name='event_index', fields=['location','time','status'],)]
 
 class Issue(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)

@@ -5,7 +5,7 @@ from launmon.settings.secrets import *
 SECRET_KEY = 'tfamt$5c@(_efm_v9#7-5uwwx7e&*d=h52+*s8+*l22kyzbi&z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
                  "launmon.ddns.net",
@@ -37,9 +37,13 @@ CACHES = {
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.porkbun.com"
+EMAIL_HOST_USER = "admin@375lincoln.nyc"
+EMAIL_FROM_USER = "admin@375lincoln.nyc"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+DEFAULT_FROM_EMAIL = "admin@375lincoln.nyc"
 
 # Cookies
 ACCOUNT_SESSION_REMEMBER = True
