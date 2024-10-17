@@ -16,6 +16,8 @@ urlpatterns = [
     path("issues/<str:location>", views.issues, name="issues"),
     path("fix/<str:issue>", views.issue_fix),
     path("add-site", views.add_site, name="add-site"),
+    path("gen-qr/<str:site>", views.gen_qr, name="gen-qr"),
+    path("site-qr", views.site_qr, name="site-qr"),
     path("issues/fix/<str:issue>", views.issue_fix, name="issue-fix"),
     path("subscribe", views.subscribe, name="subscribe"),
     path("unsubscribe", views.unsubscribe, name="unsubscribe"),

@@ -6,13 +6,14 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Location, Issue, Subscription, UserSite, Site, Event
 from .forms import ReportForm, FixForm
 
 from datetime import datetime, timezone
-
 from laundry import vapidsecrets
+import qrcode
 
 def get_back_link(request):
     try:
@@ -61,8 +62,10 @@ def index(request):
 
     print(f"sites={sites}")
     print(f"site={site}")
+
+    nsections = len(set([l.section for l in locs]))
     
-    context = {"locations": locs, "sites": sites, "site": site, "message": message, "message_type": 0}
+    context = {"locations": locs, "sites": sites, "site": site, "nsections": nsections, "message": message, "message_type": 0}
 
     return render(request,"laundry/index.html",context)
 
@@ -162,7 +165,6 @@ def issue_fix(request,issue=None):
 
 @login_required
 def add_site(request):
-    userSite = UserSite()
     user = request.user
     print(user)
     try:
@@ -182,6 +184,23 @@ def add_site(request):
         print(e)
 
     return HttpResponseRedirect(reverse('index')+f'?message=Added {us.site.name}!')
+
+@staff_member_required
+def gen_qr(request,site):
+
+    url = request.build_absolute_uri(f'/laundry/add-site?site-key={site}')
+    print(url)
+    img = qrcode.make(url)
+    resp = HttpResponse(content_type="image/png")
+    img.save(resp,"PNG")
+
+    return resp
+
+@staff_member_required
+def site_qr(request):
+    sites = Site.objects.all()
+    return render(request,"laundry/qrcode.html",{'sites': sites})
+
 
 
 def subscribe(request):

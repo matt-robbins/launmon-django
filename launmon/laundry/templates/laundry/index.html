@@ -3,8 +3,6 @@
 <!-- <div class="row-1 d-flex align-items-end">
 </div> -->
 
-
-
 {% endblock %}
 {% block content %}
   {% if message != None %}
@@ -22,9 +20,11 @@
     <ul class="list-group list-group-flush">
       {% for location in locations %}
       
+      {% if nsections > 1 %}
       {% ifchanged %}
         <p class="section-header">{{location.section | title }}</p>
       {% endifchanged %}
+      {% endif %}
         <li class="list-group-item" id="li-{{location.pk}}" data-loc="{{location.pk}}">
           {% include './location.html' with location=location %}
         </li>

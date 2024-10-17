@@ -1,0 +1,15 @@
+{% extends 'laundry/base.html' %}
+
+{% block content %}
+
+<div class="container w-100 mt-3">
+
+    {% for site in sites %}
+    <h2>{{site.name}}</h2>
+    <img src=" {% url 'gen-qr' site.pk %}"></img>
+    
+    {% endfor %}
+</div>
+
+
+{% endblock %}
