@@ -160,6 +160,7 @@ def issue_fix(request,issue=None):
 
     return
 
+@login_required
 def add_site(request):
     userSite = UserSite()
     user = request.user
@@ -168,13 +169,9 @@ def add_site(request):
         sitekey = request.GET['site-key']
     except Exception:
         sitekey = None
-
-    if not user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
     
     if sitekey is None:
         return HttpResponseRedirect(reverse('index')+"?message=You don't have permission to add this site!")
-    
     
     us = UserSite()
     us.user = user

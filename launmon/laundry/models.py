@@ -4,6 +4,9 @@ from django.core.cache import cache
 from Accounts.models import User
 from Processors.ProcessorFactory import ProcessorFactory
 from sesame.utils import get_query_string
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 
 class Site(models.Model):
@@ -24,6 +27,10 @@ class UserSite(models.Model):
     
     class Meta:
         indexes = [models.Index(name='user_site_index', fields=['user','site'],)]
+
+@receiver(post_save, sender=User)
+def user_saved(sender, instance, **kwargs):
+    print(f"saved user: {sender}")
     
 class Section(models.Model):
     class Meta:
