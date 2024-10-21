@@ -81,7 +81,7 @@ function reloadTimeline() {
 
 async function reloadTimelineTrack(name='dry',number=0) {
     //loc = document.getElementById("loc_select").value;
-    let loc = 20;
+    let loc = LOCATION;
 
     var url = '/laundry/cycles-json?type='+name+'&hours='+hours+'&location='+loc;
     console.log(url);
