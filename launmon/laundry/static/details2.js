@@ -76,13 +76,8 @@ function addData(chart,time,current) {
     chart.update();
 }
 
-function reloadTimeline() {
+async function reloadTimeline() {
     dry_tl.reset();
-    reloadTimelineTrack('dry',0);
-    reloadTimelineTrack('wash',1);
-}
-
-async function reloadTimelineTrack(name='dry',number=0) {
     //loc = document.getElementById("loc_select").value;
     let loc = LOCATION;
 
@@ -93,7 +88,8 @@ async function reloadTimelineTrack(name='dry',number=0) {
     var data = await response.json();
     console.log(data.cycles)
 
-    dry_tl.draw(data.cycles,track=number, function (e) {
+    dry_tl.draw(data.cycles,track=0, function (e) {
+        console.log(`clicked on event ${e}`)
         updatePlot(loc,e);
     });
 }

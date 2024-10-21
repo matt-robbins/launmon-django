@@ -148,7 +148,7 @@ def rawcurrent_json(request):
 
     print(f"{start}-{end}")
     
-    cur = Rawcurrent.objects.filter(location=loc).filter(time__lt=end).filter(time__gt=start).values()
+    cur = Rawcurrent.objects.filter(location=loc).filter(time__lt=end).filter(time__gt=start).order_by('time').values()
 
     dict = {"time": [c['time'] for c in cur], "current": [c['current'] for c in cur]}
 
