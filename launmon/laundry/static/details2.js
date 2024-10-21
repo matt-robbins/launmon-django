@@ -14,6 +14,9 @@ chart.realtime = false;
 async function updatePlot(loc,e) {
     var url = '';
     var realtime = false;
+
+    console.log(loc)
+    console.log(e)
     if (e) {
         url = '/laundry/rawcurrent-json?location='+loc+'&start='+e.start+'&end='+e.end;
     }
@@ -33,7 +36,7 @@ async function updatePlot(loc,e) {
     chart = new Chart(document.getElementById("graph-canvas"), {
         type: 'line',
         data: {
-            labels: data.time.map((x) => new Date(x+"Z").getTime()),
+            labels: data.time.map((x) => new Date(x).getTime()),
             datasets: [{
                 label: 'Current (units)',
                 data: data.current,
@@ -130,7 +133,7 @@ window.addEventListener("load", (event) => {
             if (ev.target.classList.contains("timeline-event")) {
                 return;
             }
-            // TODO: updatePlot(loc);
+            updatePlot(loc);
         });
     }
     console.log("onload!")
