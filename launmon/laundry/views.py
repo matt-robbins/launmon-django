@@ -129,8 +129,8 @@ def cycles_json(request):
 def rawcurrent_json(request):
     loc = request.GET['location']
     try:
-        start = datetime.strptime(request.GET['start'], "%Y-%m-%dT%H:%M:%SZ")
-        end = datetime.strptime(request.GET['end'], "%Y-%m-%dT%H:%M:%SZ")
+        start = datetime.strptime(request.GET['start'], "%Y-%m-%dT%H:%M:%S.%fZ")
+        end = datetime.strptime(request.GET['end'], "%Y-%m-%dT%H:%M:%S.%fZ")
     except Exception as e:
         start = None
         end = None
