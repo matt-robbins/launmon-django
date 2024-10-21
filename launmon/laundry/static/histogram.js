@@ -1,6 +1,10 @@
 class HourlyHistogram {
     constructor(div) {
         this.home = div
+
+        if (this.home === null) {
+            return;
+        }
         div.textContent = '';
         div.classList.add("histogram-container")
 
@@ -50,6 +54,9 @@ class HourlyHistogram {
 
     }
     draw(data) {
+        if (this.home === null) {
+            return;
+        }
         for (var ix in this.bars) {
             let h = data[ix];
             if (h > 1) {

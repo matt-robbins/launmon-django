@@ -51,8 +51,8 @@ class Timeline {
     }
 
     setEventPosition(ev) {
-        var start = new Date(ev.timelineEvent.start+"Z").getTime();
-        var end = new Date(ev.timelineEvent.end+"Z").getTime();
+        var start = new Date(ev.timelineEvent.start).getTime();
+        var end = new Date(ev.timelineEvent.end).getTime();
         
         if (ev.timelineEvent.end === null) {
             end = new Date().getTime();
@@ -85,7 +85,9 @@ class Timeline {
                 cb(ev.currentTarget.timelineEvent)
             }, e);
 
-            this.tracks[track].appendChild(ev);
+            let tk = e.type == 'dry' ? 0 : 1
+
+            this.tracks[tk].appendChild(ev);
         }
     }
 

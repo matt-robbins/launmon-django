@@ -65,6 +65,12 @@
             All Issues
         </a>
     </div>
+
+    {% if request.user.is_staff %}
+    <div>
+        <a href="{% url 'timeline' location.pk %}?from={{request.path}}">Data and Details</a>
+    </div>
+    {% endif %}
 </div>
 
 <script type="text/javascript">

@@ -1,0 +1,45 @@
+{% extends 'laundry/base.html' %} 
+
+{% block extracss %}
+    <link rel="stylesheet" href="/static/histogram.css">
+    <link rel="stylesheet" href="/static/timeline.css">
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.30.1/date_fns.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page w-100">
+
+    {% for loc in locations %}
+    {% endfor %}
+    
+    <div id="timeline-container">
+        <div id="timeline"></div>
+        <div id="timeline-buttons">
+            <button type="button" class="btn btn-secondary btn-sm" id="timeline-zin">+</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="timeline-zout">-</button>
+        </div>
+    </div>
+
+    <div id="realtime" class="realtime-monitor">
+        <p id="rtdata-text"></p>
+    </div>
+    
+    <div id="graph" class="graph">
+        <canvas id="graph-canvas"></canvas>
+    </div>
+</div>
+
+<script>
+    let LOCATION = {{location.pk}}
+</script>
+
+<script src="/static/timeline.js"></script>
+<script src="/static/details2.js"></script>
+
+{% endblock %}
+

@@ -8,9 +8,12 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path("", views.index, name="index"),
     path("details/<str:location>", views.details, name="details"),
+    path("timeline/<str:location>", views.timeline, name="timeline"),
     path("vapid-pubkey", views.vapid_pubkey, name="vapid-pubkey"),
     path("json", views.index_json, name="json"),
     path("histogram-json", views.histogram_json, name="histogram_json"),
+    path("cycles-json", views.cycles_json, name="cycles_json"),
+    path("rawcurrent-json", views.rawcurrent_json, name="current_json"),
     path("report/<str:location>", views.report, name="report"),
     path("issues", views.issues, name="issues"),
     path("issues/<str:location>", views.issues, name="issues"),

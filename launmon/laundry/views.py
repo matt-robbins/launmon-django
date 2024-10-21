@@ -8,10 +8,10 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Location, Issue, Subscription, UserSite, Site, Event
+from .models import Location, Issue, Subscription, UserSite, Site, Event, Rawcurrent
 from .forms import ReportForm, FixForm
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from laundry import vapidsecrets
 import qrcode
 
@@ -106,7 +106,54 @@ def details(request, location=None):
     loc = Location.objects.get(pk=location)
     events = Event.objects.filter(location=loc)
 
-    return render(request,"laundry/details.html", {"location":loc,"events":events,"day":0,"message": message}, )
+    return render(request,"laundry/details.html", {"location":loc,"events":events,"day":0,"message": message},)
+
+def timeline(request, location=None):
+    loc = Location.objects.get(pk=location)
+    events = Event.objects.filter(location=loc)
+
+    return render(request,"laundry/timeline.html", {"location":loc,"events":events},)
+
+def cycles_json(request):
+
+    loc = request.GET['location']
+    hrs = request.GET['hours']
+
+    cycles = Event.get_cycles(loc,hrs)
+    print(cycles)
+
+    ret = [{'start': c[0],'end': c[1],'type': c[2]} for c in cycles]
+
+    return JsonResponse({'cycles':ret})
+
+def rawcurrent_json(request):
+    loc = request.GET['location']
+    try:
+        start = datetime.fromisoformat(request.GET['start'])
+        end = datetime.fromisoformat(request.GET['end'])
+    except Exception as e:
+        start = None
+        end = None
+    try:
+        dur_min = request.GET['minutes']
+    except Exception as e:
+        dur_min = None
+
+    if all([start is None, end is None]):
+        dur_min = 30
+
+    if dur_min is not None:
+        end = datetime.now(timezone.utc)
+        start = end - timedelta(minutes=dur_min)
+
+    print(f"{start}-{end}")
+    
+    cur = Rawcurrent.objects.filter(location=loc).filter(time__lt=end).filter(time__gt=start).values()
+
+    dict = {"time": [c['time'] for c in cur], "current": [c['current'] for c in cur]}
+
+    return JsonResponse(dict)
+
 
 def histogram_json(request):
     loc = request.GET['location']

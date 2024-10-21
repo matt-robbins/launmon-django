@@ -230,6 +230,47 @@ class Event(models.Model):
 
             return ret
         
+    def get_cycles(location, hrs=96):
+        table_name = Event.objects.model._meta.db_table
+
+        options_sd = "'nonedry','noneboth','washboth','washdry'"
+        options_ed = "'drynone','bothnone','bothwash','drywash'"
+        options_sw = "'nonewash','noneboth','dryboth','drywash'"
+        options_ew = "'washnone','bothnone','bothdry','washdry'"
+
+        sql = f"""
+            SELECT time,endtime,type FROM (
+                SELECT time,lead(time) OVER (ORDER BY time) endtime,cstart, 'wash' type FROM (
+                    SELECT time,
+                        (lag(status) OVER (ORDER BY time) || status) 
+                            IN ({options_sw}) cstart, 
+                        (lag(status) OVER (ORDER BY time) || status) 
+                            IN ({options_ew}) cend
+                    FROM {table_name} 
+                    WHERE location_id=%s 
+                    AND time > NOW() - INTERVAL '%s hour'
+                )
+                UNION 
+                SELECT time,lead(time) OVER (ORDER BY time) endtime,cstart, 'dry' type FROM (
+                    SELECT time,
+                        (lag(status) OVER (ORDER BY time) || status) 
+                            IN ({options_sd}) cstart, 
+                        (lag(status) OVER (ORDER BY time) || status) 
+                            IN ({options_ed}) cend
+                    FROM {table_name} 
+                    WHERE location_id=%s 
+                    AND time > NOW() - INTERVAL '%s hour'
+                )
+            )
+            WHERE cstart IS true
+            ORDER BY time;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [location, int(hrs), location, int(hrs)])
+            rows = cursor.fetchall()
+            return rows
+        
     class Meta:
         indexes = [models.Index(name='event_index', fields=['location','time','status'],)]
 
