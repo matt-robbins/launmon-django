@@ -249,7 +249,7 @@ class Event(models.Model):
                     FROM {table_name} 
                     WHERE location_id=%s 
                     AND time > NOW() - INTERVAL '%s hour'
-                )
+                ) AS washies
                 UNION 
                 SELECT time,lead(time) OVER (ORDER BY time) endtime,cstart, 'dry' type FROM (
                     SELECT time,
@@ -260,8 +260,8 @@ class Event(models.Model):
                     FROM {table_name} 
                     WHERE location_id=%s 
                     AND time > NOW() - INTERVAL '%s hour'
-                )
-            )
+                ) AS drysies
+            ) AS bothsies
             WHERE cstart IS true
             ORDER BY time;
         """
