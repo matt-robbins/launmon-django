@@ -57,6 +57,9 @@ class Timeline {
         if (ev.timelineEvent.end === null) {
             end = new Date().getTime();
         }
+        if (ev.timelineEvent.start === null) {
+            start = this.tape_start;
+        }
         
         var left = (1-((this.tape_end-start)/this.scale))*100;
         var width = ((end-start)/this.scale)*100;
