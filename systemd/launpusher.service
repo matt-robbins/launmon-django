@@ -8,9 +8,9 @@ User=launy
 [Service]
 User=launy
 Group=www-data
-WorkingDirectory=/home/launy/code/launmon
-Environment="PATH=/home/launy/code/launmon/env/bin"
-ExecStart=python3 webpusher.py
+WorkingDirectory=/home/launy/code/launmon-django
+Environment="PATH=/home/launy/code/launmon-django/env/bin"
+ExecStart=launmon/manage.py runpusher
 Restart=always
 RestartSec=1
 
