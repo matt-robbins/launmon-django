@@ -5,8 +5,9 @@ from Accounts.models import User
 from Processors.ProcessorFactory import ProcessorFactory
 from sesame.utils import get_query_string
 from django.db.models.signals import post_save
+from django.db.models.functions import Lag
+from django.db.models import F, Window
 from django.dispatch import receiver
-
 
 
 class Site(models.Model):
@@ -270,6 +271,38 @@ class Event(models.Model):
             cursor.execute(sql, [location, int(hrs), location, int(hrs)])
             rows = cursor.fetchall()
             return rows
+        
+    def get_cycles2(location_id, start, end):
+        e = Event.objects.filter(
+            location=location_id,time__gte=start,time__lte=end).exclude(status="offline").exclude(status="ooo").order_by(
+                'time').annotate(
+                    prev=Window(expression=Lag('status'))).exclude(prev=F('status')).all()
+        
+        cycles = []
+
+        wc = {'start': None, 'end': None, 'type': 'wash'}
+        dc = {'start': None, 'end': None, 'type': 'dry'}
+        for event in e:
+            if event.prev + event.status in ["nonewash", "dryboth"]: # start
+                wc['start'] = event.time
+            if event.prev + event.status in ["washnone", "bothdry"]: # end
+                wc['end'] = event.time
+                cycles.append(wc.copy())
+                wc['start'] = wc['end'] = None
+
+            if event.prev + event.status in ["nonedry", "washboth"]:
+                dc['start'] = event.time
+            if event.prev + event.status in ["drynone", "bothwash"]:
+                dc['end'] = event.time
+                cycles.append(dc.copy())
+                dc['start'] = dc['end'] = None
+
+        if wc['start'] is not None:
+            cycles.append(wc)
+        if dc['start'] is not None:
+            cycles.append(dc)
+
+        return cycles
         
     class Meta:
         indexes = [models.Index(name='event_index', fields=['location','time','status'],)]

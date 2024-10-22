@@ -117,25 +117,28 @@ def timeline(request, location=None):
 def cycles_json(request):
 
     loc = request.GET['location']
-    hrs = request.GET['hours']
+    try:
+        hrs = int(request.GET['hours'])
+    except Exception as e:
+        hrs = 96
 
-    cycles = Event.get_cycles(loc,hrs)
-    print(cycles)
+    cycles = Event.get_cycles2(loc,datetime.now(timezone.utc)-timedelta(hours=hrs),datetime.now(timezone.utc))
 
-    ret = [{'start': c[0],'end': c[1],'type': c[2]} for c in cycles]
-
-    return JsonResponse({'cycles':ret})
+    return JsonResponse({'cycles':cycles})
 
 def rawcurrent_json(request):
     loc = request.GET['location']
     try:
         start = datetime.strptime(request.GET['start'], "%Y-%m-%dT%H:%M:%S.%fZ")
-        end = datetime.strptime(request.GET['end'], "%Y-%m-%dT%H:%M:%S.%fZ")
     except Exception as e:
         start = None
-        end = None
     try:
-        dur_min = request.GET['minutes']
+        end = datetime.strptime(request.GET['end'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    except Exception as e:
+        end = datetime.now(timezone.utc)
+
+    try:
+        dur_min = int(request.GET['minutes'])
     except Exception as e:
         dur_min = None
 
