@@ -117,7 +117,7 @@ $(function () {
     })
   })
 
-  //updateSubscriptions();
+  updateSubscriptions();
 
   // Check if service workers are supported
   if ('serviceWorker' in navigator) {
