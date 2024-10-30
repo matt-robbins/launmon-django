@@ -46,7 +46,8 @@ class HourlyHistogram {
 
         for (var i = 0; i < 24; i++) {
             var nd = document.createElement("div");        
-            nd.classList.add("histogram-bar")
+            nd.classList.add("histogram-bar");
+            nd.style.maxHeight = 0;
     
             hist.appendChild(nd)
             this.bars.push(nd)

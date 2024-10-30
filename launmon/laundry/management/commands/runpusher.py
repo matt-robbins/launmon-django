@@ -32,7 +32,7 @@ class Webpusher:
     def __init__(self):
         self.redis = redis.Redis()
         self.p = self.redis.pubsub(ignore_subscribe_messages=True)
-        self.p.psubscribe("status:*")
+        self.p.psubscribe("launmon-status:*")
 
     def run(self):
         for msg in self.p.listen():

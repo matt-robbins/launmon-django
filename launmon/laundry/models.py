@@ -16,6 +16,19 @@ class Site(models.Model):
     def __str__(self):
         return self.name
     
+    def to_dict(self, refresh=False):
+        key = f"{Site.__name__}_dict:{self.pk}"
+        ret = cache.get(key)
+
+        if (ret is not None and not refresh):
+            return ret
+        
+        locs = Location.objects.filter(site=self)
+        ret = [loc.to_dict() for loc in locs]
+        
+        cache.set(key, ret)
+        return ret
+    
 class UserSite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
@@ -82,13 +95,15 @@ class Location(models.Model):
     def latest_time(self):
         issue = self.latest_issue()
         if (issue is not None and issue.ooo == True):
-            return issue.time
-        
-        try:
-            return Event.objects.filter(location=self).order_by("-time")[0].time
-        except IndexError as e:
-            print(f"No events ever recorded at location {self}")
-            return None
+            time = issue.time
+        else:
+            try:
+                time = Event.objects.filter(location=self).order_by("-time")[0].time
+            except IndexError as e:
+                print(f"No events ever recorded at location {self}")
+                time = None
+
+        return time
     
     def latest_status(self):
         lastseen = cache.get("%s_lastseen:%s"%(Location.__name__,self.pk))
@@ -99,20 +114,54 @@ class Location(models.Model):
         if (issue is not None and issue.ooo == True):
             return 'ooo'
 
-        if (datetime.now(tz=timezone.utc)-lastseen).total_seconds() > 60:
+        if (datetime.now(tz=timezone.utc)-lastseen).total_seconds() > 600:
             return 'offline'
-
+        
         try:
-            return Event.objects.filter(location=self).order_by("-time")[0].status
+            status = Event.objects.filter(location=self).order_by("-time")[0].status
         except Exception as e:
-            return 'none'
+            status = 'none'
+
+        return status
     
     def latest_issue(self):
         issues = Issue.objects.filter(location=self).filter(fix_time__isnull=True).order_by("-time")
         try:
-            return issues[0]
+            issue = issues[0]
         except IndexError:
-            return None
+            issue = None
+        
+        return issue
+    
+    @classmethod
+    def get_cached(cls, pk):
+        key = f"{Location.__name__}_dict:{pk}"
+        return cache.get(key)
+    
+    def to_dict(self, refresh=False):
+        key = f"{Location.__name__}_dict:{self.pk}"
+        ret = cache.get(key)
+
+        if (ret is not None and not refresh):
+            return ret
+
+        try:
+            datestr = self.latest_time().isoformat()
+        except AttributeError:
+            datestr = None
+
+        ret = {"pk": self.pk, 
+                "name": self.name,
+                "site": self.site.name,
+                "section": self.section.name if self.section is not None else "",
+                "type": self.type.type,
+                "typename": self.type.name,
+                "status": self.latest_status(), 
+                "issues": self.latest_issue() is not None, 
+                "lastseen": datestr}
+        
+        cache.set(key, ret)
+        return ret
         
     def get_baseline_current(self):
         # use the cache cause this is expensive
@@ -140,6 +189,10 @@ class Location(models.Model):
 
         cache.set(cache_key, baseline)
         return baseline
+    
+    def save(self, *args, **kwargs):   
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        self.to_dict(refresh=True)
 
     
 class Device(models.Model):
@@ -188,6 +241,10 @@ class Rawcurrent(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     current = models.FloatField(null=True)
     time = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        cache.set(f"{Location.__name__}_lastseen:{self.location.pk}", self.time)
 
 
 class Event(models.Model):
@@ -303,6 +360,11 @@ class Event(models.Model):
             cycles.append(dc)
 
         return cycles
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        self.location.to_dict(refresh=True)
+        self.location.site.to_dict(refresh=True)
         
     class Meta:
         indexes = [models.Index(name='event_index', fields=['location','time','status'],)]

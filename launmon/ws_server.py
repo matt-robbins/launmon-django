@@ -24,6 +24,7 @@ async def rebroadcast():
             packet = {"location": machine, ch: data}
 
             websockets.broadcast(CONNECTIONS, json.dumps(packet))
+        await asyncio.sleep(0) # give new clients a chance to register
 
 async def main():
     async with websockets.serve(register, "localhost", 5678):
@@ -31,4 +32,5 @@ async def main():
 
 if __name__ == "__main__":
     p.psubscribe("status:*")
+    # p.psubscribe("current:*")
     asyncio.run(main())

@@ -20,7 +20,7 @@ class Publisher:
 
 class RedisPublisher(Publisher):
     def publish(self,channel,data):
-        channel = ':'.join([str(c) for c in channel])
+        channel = 'launmon-' + ':'.join([str(c) for c in channel])
         try:
             self.r.publish(channel,data)
         except Exception as e:

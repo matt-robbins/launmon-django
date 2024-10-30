@@ -24,22 +24,18 @@ def get_back_link(request):
 
     return redirect_url
 
-@login_required
-def index(request):
-    try:
-        message = request.GET['message']
-    except Exception:
-        message = None
-
+def get_request_user_and_sites(request, refresh=False):
     try:
         siteid = request.GET['site']
         request.session["site"] = siteid
     except Exception:
         siteid = None
 
-    print(f"siteid={siteid}")
-
     user = request.user
+
+    key = f"u:{user}:siteid:{siteid}"
+    print(f"cache key = {key}")
+
     try:
         sites = [u.site_id for u in UserSite.objects.filter(user=user)]
         qs = Site.objects.filter(pk__in=sites)
@@ -53,19 +49,33 @@ def index(request):
                 site = qs.first()
 
         locs = Location.objects.filter(site=site)
-        print(site)
     except Exception as e:
         print(e)
         locs = []
         sites = None
         site = None
 
+    return (locs,sites,site)
+
+def get_location_dict(locs):
+    return [loc.to_dict() for loc in locs]
+
+@login_required
+def index(request):
+    locs,sites,site = get_request_user_and_sites(request)
+
+    try:
+        message = request.GET['message']
+    except Exception:
+        message = None
+
     print(f"sites={sites}")
     print(f"site={site}")
 
     nsections = len(set([l.section for l in locs]))
-    
-    context = {"locations": locs, "sites": sites, "site": site, "nsections": nsections, "message": message, "message_type": 0}
+
+    locd = site.to_dict() if site else []
+    context = {"locations": locd, "sites": sites, "site": site, "nsections": nsections, "message": message, "message_type": 0}
 
     return render(request,"laundry/index.html",context)
 
@@ -76,25 +86,12 @@ def vapid_pubkey(request):
 def status_css(request):
     return render(request, "laundry/status.css", {'map': Event.EVENT_STATUS_CHOICES}, content_type="text/css")
 
+
 def index_json(request):
-    locs = Location.objects.all()
-    jso = []
-    for loc in locs:
-        try:
-            datestr = loc.latest_time().isoformat()
-        except AttributeError:
-            datestr = None
-
-        jso.append({"location": loc.pk, 
-                    "name": loc.name,
-                    "site": loc.site.name,
-                    "section": loc.section.name if loc.section is not None else "",
-                    "type": loc.type.name,
-                    "status": loc.latest_status(), 
-                    "issues": loc.latest_issue() is not None, 
-                    "lastseen": datestr})
-
-    return JsonResponse(jso, safe=False)
+    locs,_,site = get_request_user_and_sites(request)
+    #locs = Location.objects.all()
+    locd = site.to_dict() if site else []
+    return JsonResponse(locd, safe=False)
 
 
 def details(request, location=None):
@@ -103,8 +100,8 @@ def details(request, location=None):
     except Exception:
         message = None
 
-    loc = Location.objects.get(pk=location)
-    events = Event.objects.filter(location=loc)
+    loc = Location.get_cached(location)
+    events = Event.objects.filter(location_id=location)
 
     return render(request,"laundry/details.html", {"location":loc,"events":events,"day":0,"message": message},)
 

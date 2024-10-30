@@ -40,6 +40,10 @@
         max-height: 1em;
       }
 
+      .navbutton:focus {   
+        background-color:azure;
+      }
+      
       .navbar-toggle .icon-bar{
         width: 20px !important;
         height: 10px !important;
@@ -183,7 +187,7 @@
   <body style="font-size: small;">
     <nav class="navbar sticky-top navbar-light bg-light ml-2">
       <div class="container-fluid">
-        <a class="navbar-brand pl-2" href="{% if next_url %}{{next_url}}{% else %}{% url 'index' %}{% endif %}">
+        <a class="navbar-brand pl-2 navbutton" href="{% if next_url %}{{next_url}}{% else %}{% url 'index' %}{% endif %}">
         {% if not request.resolver_match.view_name == 'index' %}
           <i class="fa-solid fa-chevron-left"></i>
         {% elif sites %}

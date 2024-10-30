@@ -51,7 +51,7 @@ function update() {
     .then((status) => {
       status.forEach((location) => {
         time = new Date(location.lastseen)
-        update_location(location.location, location.status, new Date(location.lastseen))
+        update_location(location.pk, location.status, new Date(location.lastseen))
       });
     });
 }
@@ -117,7 +117,7 @@ $(function () {
     })
   })
 
-  updateSubscriptions();
+  //updateSubscriptions();
 
   // Check if service workers are supported
   if ('serviceWorker' in navigator) {
