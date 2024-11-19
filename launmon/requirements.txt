@@ -13,6 +13,7 @@ Django==5.0.5
 django-allauth==65.0.2
 django-crispy-forms==2.3
 django-debug-toolbar==4.4.6
+django-filter==24.3
 django-sesame==3.2.2
 django_reverse_admin==2.9.6
 djangorestframework==3.15.1
@@ -36,5 +37,6 @@ tornado==6.4.1
 typing_extensions==4.11.0
 urllib3==2.2.1
 uWSGI==2.0.25.1
+websocket-client==1.8.0
 websockets==12.0
 yarl==1.9.4
