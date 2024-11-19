@@ -24,7 +24,7 @@
             <p class="section-header">{{location.section | title }}</p>
           {% endifchanged %}
         {% endif %}
-        <li class="list-group-item" id="li-{{location.pk}}" data-loc="{{location.pk}}">
+        <li class="list-group-item clickable" id="li-{{location.pk}}" data-loc="{{location.pk}}">
           {% include './location.html' with location=location %}
         </li>
       {% endfor %}

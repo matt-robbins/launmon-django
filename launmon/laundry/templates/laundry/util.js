@@ -1,6 +1,6 @@
 
 function setButtonSubscribed(checkbox, subscribed) {
-    checkbox[0].checked = subscribed
+    checkbox.checked = subscribed
 }
 
 function isButtonSubscribed(button) {
@@ -39,7 +39,7 @@ function updateSubscriptions() {
                     });
                     Array.from(document.querySelectorAll('[id^="subcheck-"]')).forEach((btn,ix) => {
                         loc_id = Number(btn.id.split("-")[1]);
-                        setButtonSubscribed($('#'+btn.id),ids.includes(loc_id))
+                        setButtonSubscribed(btn,ids.includes(loc_id))
                     })
                 })
             })

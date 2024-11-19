@@ -124,6 +124,9 @@ class Location(models.Model):
 
         return status
     
+    def issues(self):
+        return Issue.objects.filter(location=self).order_by("-time")
+    
     def latest_issue(self):
         issues = Issue.objects.filter(location=self).filter(fix_time__isnull=True).order_by("-time")
         try:
@@ -136,7 +139,13 @@ class Location(models.Model):
     @classmethod
     def get_cached(cls, pk):
         key = f"{Location.__name__}_dict:{pk}"
-        return cache.get(key)
+        print(f"key = {key}")
+        ret = cache.get(key)
+        # print(f"got value {ret} from cache")
+        if (ret is None):
+            print(f"refreshed cache for {pk}")
+            ret = Location.objects.get(pk=pk).to_dict()
+        return ret
     
     def to_dict(self, refresh=False):
         key = f"{Location.__name__}_dict:{self.pk}"

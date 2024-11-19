@@ -15,6 +15,8 @@ from datetime import datetime, timezone, timedelta
 from laundry import vapidsecrets
 import qrcode
 
+from .serializers import LocationSerializer
+
 def get_back_link(request):
     try:
         redirect_url = request.GET['from']
@@ -37,8 +39,7 @@ def get_request_user_and_sites(request, refresh=False):
     print(f"cache key = {key}")
 
     try:
-        sites = [u.site_id for u in UserSite.objects.filter(user=user)]
-        qs = Site.objects.filter(pk__in=sites)
+        qs = Site.objects.filter(usersite__user=user)
         sites = qs.all()
         if siteid is not None:
             site = Site.objects.filter(id=siteid).first()
@@ -74,7 +75,9 @@ def index(request):
 
     nsections = len(set([l.section for l in locs]))
 
-    locd = site.to_dict() if site else []
+    # locd = site.to_dict() if site else []
+
+    locd = LocationSerializer(Location.objects.filter(site_id=site), many=True).data
     context = {"locations": locd, "sites": sites, "site": site, "nsections": nsections, "message": message, "message_type": 0}
 
     return render(request,"laundry/index.html",context)
@@ -100,7 +103,7 @@ def details(request, location=None):
     except Exception:
         message = None
 
-    loc = Location.get_cached(location)
+    loc = LocationSerializer(Location.objects.get(pk=location)).data
     events = Event.objects.filter(location_id=location)
 
     return render(request,"laundry/details.html", {"location":loc,"events":events,"day":0,"message": message},)

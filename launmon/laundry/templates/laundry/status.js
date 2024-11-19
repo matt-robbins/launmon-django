@@ -1,57 +1,55 @@
 const status_table = {'none': 'Available','wash': "Washing", 'dry': 'Drying', 'both': 'Running'}
 
-
-function update_location(location, status, time) {
-  const locdiv = $(`#location-${location}`);
-  // if (location.lastseen === null) {
-  //   time_text = "unknown time";
-  // }
-  // else {
-  //   time_text = jQuery.timeago(time);
-  // }
-  //const lastUpdated = new Date(`${location.lastseen}`);
-  locdiv
-    .find("[data-js-attr='status-display']")
-    .attr("class", "status " + status);
-  locdiv
-    .find("[data-js-attr='location-updated-at']")
-    .timeago("update", time)
-  locdiv
-    .find("svg.washer")
-    .attr("class", "machine washer " + status);
-  locdiv
-    .find("path.washer-center")
-    .attr("class", "washer-center " + status);
-  locdiv
-    .find("svg.dryer")
-    .attr("class", "machine dryer " + status);
-
-  const li = document.getElementById("li-"+location)
-
-  if (li != null) {
-    li.addEventListener('click', (e) => {
-      e.stopPropagation();
-  
-      if (e.target.classList.contains('no-nav')) {
-        console.log("not navigating");
-        console.log(e.target);
-        
-      }
-      else {
-        console.log("navigating!")
-        window.location.href = "details/" + location;
-      }
-    })
+function timeAgo(input) {
+  const date = (input instanceof Date) ? input : new Date(input);
+  const formatter = new Intl.RelativeTimeFormat('en');
+  const ranges = {
+    years: 3600 * 24 * 365,
+    months: 3600 * 24 * 30,
+    weeks: 3600 * 24 * 7,
+    days: 3600 * 24,
+    hours: 3600,
+    minutes: 60,
+    seconds: 1
+  };
+  const secondsElapsed = (date.getTime() - Date.now()) / 1000;
+  for (let key in ranges) {
+    if (ranges[key] < Math.abs(secondsElapsed)) {
+      const delta = secondsElapsed / ranges[key];
+      return formatter.format(Math.round(delta), key);
+    }
   }
 }
 
+function update_location(locdiv, status, time) {
+
+  locdiv
+    .querySelector("[data-js-attr='status-display']")
+    .className = "status " + status;
+
+  locdiv
+    .querySelector("[data-js-attr='location-updated-at']")
+    .innerHTML = timeAgo(tstamp.dateTime);
+    
+  locdiv
+    .querySelector("svg.washer")
+    .className = "machine washer " + status;
+  locdiv
+    .querySelector("path.washer-center")
+    .className = "washer-center " + status;
+  locdiv
+    .querySelector("svg.dryer")
+    .className = "machine dryer " + status;
+}
+
 function update() {
-  fetch(`${$SCRIPT_ROOT}/json`)
+  fetch(`/v1/locations/?format=json`)
     .then((resp) => resp.json())
     .then((status) => {
       status.forEach((location) => {
         time = new Date(location.lastseen)
-        update_location(location.pk, location.status, new Date(location.lastseen))
+        const locdiv = document.querySelector(`[data-loc="${location}"]`)
+        update_location(locdiv, location.latest_status, new Date(location.latest_time))
       });
     });
 }
@@ -79,11 +77,31 @@ function startWebsocket(url) {
 }
 
 // onload function
-$(function () {
+document.addEventListener("DOMContentLoaded", function() {
   window.subscriptions = [];
-  jQuery("time.timeago").timeago();
 
-  update();
+  const locdiv = document.querySelectorAll("[data-js-attr='location-updated-at']");
+
+  Array.from(locdiv).forEach((tstamp) => {
+    tstamp.innerHTML = timeAgo(tstamp.dateTime);
+  })
+
+  Array.from(document.getElementsByClassName('clickable list-group-item')).forEach((el) => {
+    var location = el.querySelector("div.location-cell").dataset.loc;
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+  
+      if (e.target.classList.contains('no-nav')) {
+        console.log("not navigating");
+        console.log(e.target);
+        
+      }
+      else {
+        console.log("navigating!")
+        window.location.href = "details/" + location;
+      }
+    })
+  });
 
   //var timer = setInterval(update, 5000);
 
