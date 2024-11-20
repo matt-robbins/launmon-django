@@ -35,9 +35,6 @@ def get_request_user_and_sites(request, refresh=False):
 
     user = request.user
 
-    key = f"u:{user}:siteid:{siteid}"
-    print(f"cache key = {key}")
-
     try:
         qs = Site.objects.filter(usersite__user=user)
         sites = qs.all()
@@ -70,9 +67,6 @@ def index(request):
     except Exception:
         message = None
 
-    print(f"sites={sites}")
-    print(f"site={site}")
-
     nsections = len(set([l.section for l in locs]))
 
     # locd = site.to_dict() if site else []
@@ -80,7 +74,8 @@ def index(request):
     locd = LocationSerializer(Location.objects.filter(site_id=site), many=True).data
     context = {"locations": locd, "sites": sites, "site": site, "nsections": nsections, "message": message, "message_type": 0}
 
-    return render(request,"laundry/index.html",context)
+    ret = render(request, "laundry/index.html", context)
+    return ret
 
 def vapid_pubkey(request):
     return HttpResponse(vapidsecrets.PUBKEY)

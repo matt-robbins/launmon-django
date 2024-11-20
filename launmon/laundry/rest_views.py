@@ -16,6 +16,13 @@ class LocationViewSet(viewsets.ModelViewSet):
         query_set = queryset.filter(site__in=us)
 
         return query_set
+    
+    def list(self, request):
+        print(f"overridden 'list' function! ${request}")
+        resp = super().list(request)
+        print(f'response of length ${resp}')
+        return resp
+
 
 class LocationTypeViewSet(viewsets.ModelViewSet):
     queryset = LocationType.objects.all()

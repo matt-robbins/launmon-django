@@ -9,25 +9,11 @@ from django.db.models.functions import Lag
 from django.db.models import F, Window
 from django.dispatch import receiver
 
-
 class Site(models.Model):
     name = models.TextField()
     address = models.TextField(null=True)
     def __str__(self):
         return self.name
-    
-    def to_dict(self, refresh=False):
-        key = f"{Site.__name__}_dict:{self.pk}"
-        ret = cache.get(key)
-
-        if (ret is not None and not refresh):
-            return ret
-        
-        locs = Location.objects.filter(site=self)
-        ret = [loc.to_dict() for loc in locs]
-        
-        cache.set(key, ret)
-        return ret
     
 class UserSite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -114,8 +100,8 @@ class Location(models.Model):
         if (issue is not None and issue.ooo == True):
             return 'ooo'
 
-        if (datetime.now(tz=timezone.utc)-lastseen).total_seconds() > 600:
-            return 'offline'
+        # if (datetime.now(tz=timezone.utc)-lastseen).total_seconds() > 600:
+        #     return 'offline'
         
         try:
             status = Event.objects.filter(location=self).order_by("-time")[0].status
@@ -135,42 +121,6 @@ class Location(models.Model):
             issue = None
         
         return issue
-    
-    @classmethod
-    def get_cached(cls, pk):
-        key = f"{Location.__name__}_dict:{pk}"
-        print(f"key = {key}")
-        ret = cache.get(key)
-        # print(f"got value {ret} from cache")
-        if (ret is None):
-            print(f"refreshed cache for {pk}")
-            ret = Location.objects.get(pk=pk).to_dict()
-        return ret
-    
-    def to_dict(self, refresh=False):
-        key = f"{Location.__name__}_dict:{self.pk}"
-        ret = cache.get(key)
-
-        if (ret is not None and not refresh):
-            return ret
-
-        try:
-            datestr = self.latest_time().isoformat()
-        except AttributeError:
-            datestr = None
-
-        ret = {"pk": self.pk, 
-                "name": self.name,
-                "site": self.site.name,
-                "section": self.section.name if self.section is not None else "",
-                "type": self.type.type,
-                "typename": self.type.name,
-                "status": self.latest_status(), 
-                "issues": self.latest_issue() is not None, 
-                "lastseen": datestr}
-        
-        cache.set(key, ret)
-        return ret
         
     def get_baseline_current(self):
         # use the cache cause this is expensive
@@ -201,7 +151,6 @@ class Location(models.Model):
     
     def save(self, *args, **kwargs):   
         super().save(*args, **kwargs)  # Call the "real" save() method.
-        self.to_dict(refresh=True)
 
     
 class Device(models.Model):
@@ -372,8 +321,9 @@ class Event(models.Model):
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # Call the "real" save() method.
-        self.location.to_dict(refresh=True)
-        self.location.site.to_dict(refresh=True)
+
+        # self.location.to_dict(refresh=True)
+        # self.location.site.to_dict(refresh=True)
         
     class Meta:
         indexes = [models.Index(name='event_index', fields=['location','time','status'],)]

@@ -38,16 +38,16 @@
         <a href="{% url 'details' location.pk %}">
             <div class="d-flex flex-column justify-content-between align-items-end m-1">
                 {% if location.type.type == 'D' or location.type.type == 'S' %}
-                <div class="dryer-container" id="dryer-{{ location.id }}">
-                {% include './svg/dryer.svg' with status=location.status %}
+                <div class="dryer-container" id="dryer-{{ location.pk }}">
+                {% include './svg/dryer.svg' with status=location.latest_status %}
                 </div>
                 {% endif %}
                 {% if location.type.type == 'S' %}
                 <div class="pb-1"></div>
                 {% endif %}
                 {% if location.type.type == 'W' or location.type.type == 'S' %}
-                <div class="washer-container" id="washer-{{ location.id }}">
-                {% include './svg/washer.svg' with status=location.status %}
+                <div class="washer-container" id="washer-{{ location.pk }}">
+                {% include './svg/washer.svg' with status=location.latest_status %}
                 </div>
                 {% endif %}
             </div>
