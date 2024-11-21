@@ -29,7 +29,7 @@ function update_location(locdiv, status, time) {
 
   locdiv
     .querySelector("[data-js-attr='location-updated-at']")
-    .innerHTML = timeAgo(tstamp.dateTime);
+    .innerHTML = timeAgo(time);
     
   locdiv
     .querySelector("svg.washer")
@@ -52,6 +52,14 @@ function update() {
         update_location(locdiv, location.latest_status, new Date(location.latest_time))
       });
     });
+}
+
+function updateTimestamps() {
+  const locdiv = document.querySelectorAll("[data-js-attr='location-updated-at']");
+
+  Array.from(locdiv).forEach((tstamp) => {
+    tstamp.innerHTML = timeAgo(tstamp.dateTime);
+  })
 }
 
 function startWebsocket(url) {
@@ -80,11 +88,13 @@ function startWebsocket(url) {
 document.addEventListener("DOMContentLoaded", function() {
   window.subscriptions = [];
 
-  const locdiv = document.querySelectorAll("[data-js-attr='location-updated-at']");
+  // const locdiv = document.querySelectorAll("[data-js-attr='location-updated-at']");
 
-  Array.from(locdiv).forEach((tstamp) => {
-    tstamp.innerHTML = timeAgo(tstamp.dateTime);
-  })
+  // Array.from(locdiv).forEach((tstamp) => {
+  //   tstamp.innerHTML = timeAgo(tstamp.dateTime);
+  // })
+
+  var timer = setInterval(updateTimestamps, 1000);
 
   Array.from(document.getElementsByClassName('clickable list-group-item')).forEach((el) => {
     var location = el.querySelector("div.location-cell").dataset.loc;
@@ -103,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
     })
   });
 
-  //var timer = setInterval(update, 5000);
+  
 
   if (location.hostname == "localhost") {
     startWebsocket("ws://" + location.hostname + ":5678")
