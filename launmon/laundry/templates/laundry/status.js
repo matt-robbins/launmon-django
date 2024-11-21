@@ -94,6 +94,8 @@ document.addEventListener("DOMContentLoaded", function() {
   //   tstamp.innerHTML = timeAgo(tstamp.dateTime);
   // })
 
+  updateTimestamps();
+
   var timer = setInterval(updateTimestamps, 1000);
 
   Array.from(document.getElementsByClassName('clickable list-group-item')).forEach((el) => {
