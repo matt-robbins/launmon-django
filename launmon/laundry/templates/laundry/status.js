@@ -70,7 +70,8 @@ function startWebsocket(url) {
       if (e.status) {
         st = e.status.split(":");
         st = st[st.length - 1];
-        update_location(e.location,st, new Date());
+        const locdiv = document.querySelector(`[data-loc="${e.location}"]`)
+        update_location(locdiv,st, new Date());
       }
   };
 
@@ -84,18 +85,28 @@ function startWebsocket(url) {
   };
 }
 
+function checkInstalled() {
+  // Detects if device is on iOS 
+  const isIos = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test( userAgent );
+  }
+  // Detects if device is in standalone mode
+  const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+  // Checks if should display install popup notification:
+  if (isIos() && !isInStandaloneMode()) {
+    document.querySelector('.footermessage').classList = "footermessage";
+  }
+}
+
 // onload function
 document.addEventListener("DOMContentLoaded", function() {
   window.subscriptions = [];
 
-  // const locdiv = document.querySelectorAll("[data-js-attr='location-updated-at']");
-
-  // Array.from(locdiv).forEach((tstamp) => {
-  //   tstamp.innerHTML = timeAgo(tstamp.dateTime);
-  // })
+  checkInstalled();
 
   updateTimestamps();
-
   var timer = setInterval(updateTimestamps, 1000);
 
   Array.from(document.getElementsByClassName('clickable list-group-item')).forEach((el) => {

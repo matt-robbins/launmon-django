@@ -7,7 +7,9 @@ SECRET_KEY = 'tfamt$5c@(_efm_v9#7-5uwwx7e&*d=h52+*s8+*l22kyzbi&z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost",
+ALLOWED_HOSTS = [
+                "192.168.1.21",
+                "localhost",
                  "launmon.ddns.net",
                  "laundry.375lincoln.nyc",
                  "laundry-dev.375lincoln.nyc"]

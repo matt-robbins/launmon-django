@@ -178,6 +178,13 @@
         background-image: linear-gradient(45deg, var(--color-ooo-bg) 25%, transparent 25%, transparent 50%, var(--color-ooo-bg) 50%, var(--color-ooo-bg) 75%, transparent 75%, transparent);
         background-size: 50px 50px;
       }
+
+      .footermessage {
+        text-align: center;
+      }
+      .footermessage.disable {
+        display: none;
+      }
     </style>
     <link href="{% url 'status.css' %}" rel="stylesheet"/>
     {% block extracss %}{% endblock %}
@@ -277,6 +284,12 @@
 
     {% if user.is_authenticated %}
     <footer class="footer fixed-bottom bg-light p-3">
+      <div class="footermessage disable">
+        
+        <p>Install this Web App to enable notifications and allow for easy access!</p>
+        <p>Tap the share {% include './svg/share-apple.svg' %} button below, and then "Add to Homescreen"</p>
+
+      </div>
     </footer>
     {% endif %}
   </body>
