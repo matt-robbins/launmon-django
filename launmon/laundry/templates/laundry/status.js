@@ -26,20 +26,19 @@ function update_location(locdiv, status, time) {
   locdiv
     .querySelector("[data-js-attr='status-display']")
     .className = "status " + status;
-
   locdiv
     .querySelector("[data-js-attr='location-updated-at']")
     .innerHTML = timeAgo(time);
-    
-  locdiv
-    .querySelector("svg.washer")
-    .className = "machine washer " + status;
-  locdiv
-    .querySelector("path.washer-center")
-    .className = "washer-center " + status;
   locdiv
     .querySelector("svg.dryer")
-    .className = "machine dryer " + status;
+    .setAttribute("class", "machine dryer " + status);
+  locdiv
+    .querySelector("svg.washer")
+    .setAttribute("class", "machine washer " + status);
+  locdiv
+    .querySelector("path.washer-center")
+    .setAttribute("class", "washer-center " + status);
+
 }
 
 function update() {
@@ -70,6 +69,7 @@ function startWebsocket(url) {
       if (e.status) {
         st = e.status.split(":");
         st = st[st.length - 1];
+        console.log(`location = ${e.location}, status = ${st}`);
         const locdiv = document.querySelector(`[data-loc="${e.location}"]`)
         update_location(locdiv,st, new Date());
       }
