@@ -19,16 +19,17 @@ function timeAgo(input) {
       return formatter.format(Math.round(delta), key);
     }
   }
+  return "Just now"
 }
 
 function update_location(locdiv, status, time) {
-
+  console.log(`time = ${time} => ${timeAgo(time)}`)
   locdiv
     .querySelector("[data-js-attr='status-display']")
     .className = "status " + status;
   locdiv
     .querySelector("[data-js-attr='location-updated-at']")
-    .innerHTML = timeAgo(time);
+    .setAttribute('datetime', time.toISOString());
   locdiv
     .querySelector("svg.dryer")
     .setAttribute("class", "machine dryer " + status);
