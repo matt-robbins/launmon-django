@@ -23,22 +23,32 @@ function timeAgo(input) {
 }
 
 function update_location(locdiv, status, time) {
-  console.log(`time = ${time} => ${timeAgo(time)}`)
   locdiv
     .querySelector("[data-js-attr='status-display']")
     .className = "status " + status;
   locdiv
     .querySelector("[data-js-attr='location-updated-at']")
     .setAttribute('datetime', time.toISOString());
-  locdiv
-    .querySelector("svg.dryer")
-    .setAttribute("class", "machine dryer " + status);
-  locdiv
-    .querySelector("svg.washer")
-    .setAttribute("class", "machine washer " + status);
-  locdiv
-    .querySelector("path.washer-center")
-    .setAttribute("class", "washer-center " + status);
+  try {
+    locdiv
+      .querySelector("svg.dryer")
+      .setAttribute("class", "machine dryer " + status);
+  }
+  catch {
+    console.log("location as no dryer")
+  }
+  try {
+    locdiv
+      .querySelector("svg.washer")
+      .setAttribute("class", "machine washer " + status);
+    locdiv
+      .querySelector("path.washer-center")
+      .setAttribute("class", "washer-center " + status);
+  }
+  catch {
+    console.log("location has no washer")
+  }
+  
 
 }
 
@@ -48,8 +58,14 @@ function update() {
     .then((status) => {
       status.forEach((location) => {
         time = new Date(location.lastseen)
-        const locdiv = document.querySelector(`[data-loc="${location}"]`)
-        update_location(locdiv, location.latest_status, new Date(location.latest_time))
+        console.log(`location ${location.pk}`)
+        const locdiv = document.querySelector(`[data-loc="${location.pk}"]`)
+        try {
+          update_location(locdiv, location.latest_status, new Date(location.latest_time))
+        }
+        catch {
+          console.log(`failed to update location ${location.pk}`)
+        }
       });
     });
 }
