@@ -20,6 +20,7 @@ async def rebroadcast():
         message = p.get_message(timeout=1)
         if (message is not None):
             ch, machine = str.split(message['channel'].decode(),':')
+            _, ch = str.split(ch, '-') 
             data = message['data'].decode()
             packet = {"location": machine, ch: data}
 
@@ -31,6 +32,6 @@ async def main():
         await rebroadcast()
 
 if __name__ == "__main__":
-    p.psubscribe("status:*")
-    # p.psubscribe("current:*")
+    p.psubscribe("launmon-status:*")
+    # p.psubscribe("launmon-current:*")
     asyncio.run(main())
