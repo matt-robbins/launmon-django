@@ -230,9 +230,11 @@ class Event(models.Model):
                 FROM (
                     SELECT time, status, LAG(status,1) OVER ( ORDER BY time ) prev FROM {table_name} 
                     WHERE location_id=%s
+                    AND time >= now() - interval '28 day'
                 ) events 
-                WHERE status IN ('wash','dry','both','none')
-                AND prev IN ('wash','dry','both','none')
+                WHERE status != 'offline'
+                AND prev != 'offline'
+                AND status != prev
                 AND EXTRACT(DOW FROM time)=%s 
                 GROUP BY hour ORDER BY hour;
                 """
