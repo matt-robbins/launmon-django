@@ -15,7 +15,7 @@ class LocationTypeSerializer(serializers.HyperlinkedModelSerializer):
 class SiteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Site
-        fields = ['pk', 'name', 'address']   
+        fields = ['pk', 'name', 'address']
 
 class LocationSerializer(serializers.ModelSerializer):
     issues = IssueSerializer(many=True)
@@ -25,16 +25,16 @@ class LocationSerializer(serializers.ModelSerializer):
     site = SiteSerializer()
     class Meta:
         model = Location
-        fields = ['pk', 'site', 'name', 'type', 'issues', 'latest_issue', 'latest_status','latest_time']
+        fields = ['pk', 'site', 'name', 'type', 'issues', 'latest_issue', 'latest_status','latest_time','subscriber_count']
 
     def to_representation(self, instance, refresh=False):
         key = f'location-serializer:{instance.pk}'
         rep = cache.get(key)
         if (rep is not None and refresh == False):
-            print(f"returning cached representation for location {instance.pk}")
             return rep
         
         print(f"updating cached representation for location {instance.pk}")
+        print(f"subcount: {instance.subscriber_count()}")
         rep = super().to_representation(instance)
         cache.set(key,rep,86400)
 

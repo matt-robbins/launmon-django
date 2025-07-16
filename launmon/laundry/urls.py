@@ -9,6 +9,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("details/<str:location>", views.details, name="details"),
     path("timeline/<str:location>", views.timeline, name="timeline"),
+    path("notify/<str:location>", views.push_notify, name="push_notify"),
     path("vapid-pubkey", views.vapid_pubkey, name="vapid-pubkey"),
     path("json", views.index_json, name="json"),
     path("histogram-json", views.histogram_json, name="histogram_json"),

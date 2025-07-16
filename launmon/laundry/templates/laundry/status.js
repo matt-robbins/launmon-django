@@ -22,7 +22,7 @@ function timeAgo(input) {
   return "Just now"
 }
 
-function update_location(locdiv, status, time) {
+function update_location(locdiv, status, subcount, time) {
   locdiv
     .querySelector("[data-js-attr='status-display']")
     .className = "status " + status;
@@ -48,8 +48,33 @@ function update_location(locdiv, status, time) {
   catch {
     console.log("location has no washer")
   }
-  
 
+  if (subcount === null) {
+    return;
+  }
+
+  if (remind_button) {
+    buttonEnable(remind_button, subcount > 0);
+  }
+
+  try {
+    var badge = locdiv
+      .querySelector("span.subcount");
+    
+    badge.textContent = subcount;  
+    if (subcount > 0){
+      badge.classList.remove('invisible')
+      badge.classList.add('visible')
+    }
+    else {
+      badge.classList.add('invisible')
+      badge.classList.remove('visible')
+    }
+    
+  }
+  catch {
+    console.log(`yoopsie! ${e}`)
+  }
 }
 
 function update() {
@@ -58,13 +83,12 @@ function update() {
     .then((status) => {
       status.forEach((location) => {
         time = new Date(location.lastseen)
-        console.log(`location ${location.pk}`)
         const locdiv = document.querySelector(`[data-loc="${location.pk}"]`)
         try {
-          update_location(locdiv, location.latest_status, new Date(location.latest_time))
+          update_location(locdiv, location.latest_status, location.subscriber_count, new Date(location.latest_time))
         }
         catch {
-          console.log(`failed to update location ${location.pk}`)
+          //console.log(`failed to update location ${location.pk}`)
         }
       });
     });
@@ -88,7 +112,11 @@ function startWebsocket(url) {
         st = st[st.length - 1];
         console.log(`location = ${e.location}, status = ${st}`);
         const locdiv = document.querySelector(`[data-loc="${e.location}"]`)
-        update_location(locdiv,st, new Date());
+        update_location(locdiv, st, null, new Date());
+      }
+      else {
+        console.log(`updating for message`)
+        update();
       }
   };
 
@@ -117,6 +145,15 @@ function checkInstalled() {
   }
 }
 
+var remind_button = null
+
+function buttonEnable(button,enable) {
+  if (enable) {
+    button.removeAttribute('disabled');
+  } else {
+    button.setAttribute('disabled', 'true')
+  }
+}
 // onload function
 document.addEventListener("DOMContentLoaded", function() {
   window.subscriptions = [];
@@ -162,11 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // set up callbacks for subscribe buttons
   Array.from(document.querySelectorAll('[id^="subcheck-"]')).forEach((btn,ix) => {
     btn.addEventListener("click", (event) => {
-      console.log(event.currentTarget.id);
       machine = event.currentTarget.id.split("-")[1];
-      console.log(window.subscriptions)
-
-      console.log(event.currentTarget.checked)
 
       window.subscribe(
         (machine = machine),
@@ -175,6 +208,28 @@ document.addEventListener("DOMContentLoaded", function() {
     })
   })
 
+  remind_button = document.querySelector(".remind-button")
+  if (remind_button) {
+    remind_button.addEventListener("click", (event) =>{
+      console.log("reminder!")
+      fetch(`/laundry/notify/${LOCATION}`)
+
+      buttonEnable(remind_button,false);
+      remind_button.setAttribute('disabled','true');
+
+      var sp = document.querySelector('.remind-spinner');
+
+      sp.classList.replace('invisible','visible');
+
+      setTimeout(function(sp) {
+        console.log(`spinner: ${sp}`)
+        sp.classList.replace('visible','invisible');
+        buttonEnable(remind_button,true)
+      }, 5000, sp);
+
+    })
+  }
+  
   updateSubscriptions();
 
   // Check if service workers are supported

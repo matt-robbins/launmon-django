@@ -1,0 +1,31 @@
+server {
+    listen 80;
+    listen 443 ssl;
+
+    server_name laundry-dev.375lincoln.nyc;
+    ssl_certificate /etc/letsencrypt/live/375lincoln.nyc/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/375lincoln.nyc/privkey.pem;
+
+    location / {
+        # Redirect non-https traffic to https
+        if ($scheme != "https") {
+            rewrite ^ https://$host$request_uri? permanent;
+        }
+
+        include uwsgi_params;
+        uwsgi_pass unix:/tmp/launmon-django.sock;
+    }
+    
+
+    location /websocket {
+        proxy_pass http://localhost:5679;
+        proxy_read_timeout  90;
+
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+
+}

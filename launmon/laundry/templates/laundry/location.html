@@ -3,14 +3,13 @@
 
     <div class="d-flex flex-column justify-content-between">
         <div class="row">
-            <h6 class="card-title">{{ location.name | title }} 
+            <h6 class="card-title">{% if adv == 'true' %}{{ location.pk }}: {% endif %}{{ location.name | title }}
                 <a
                     class="issue-indicator {% if location.latest_issue %}issue{% endif %}"
                     id="issue-{{ location.pk }}"
                     href="{% url 'issues' location.pk %}">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </a>
-                
             </h6>
             <p class="card-subtitle text-muted mb-2">
                 <span data-js-attr="status-display" class="status {{ location.latest_status }}"></span> 
@@ -29,10 +28,11 @@
                 autocomplete="off"
             />
             <label
-                class="btn btn-outline-primary no-nav"
-                for="subcheck-{{ location.pk }}"
-                ><i class="fa-solid fa-bell no-nav"></i></label
-            >
+                class="btn btn-outline-primary no-nav position-relative"
+                for="subcheck-{{ location.pk }}">
+                <i class="fa-solid fa-bell no-nav"></i>
+                <span class="subcount position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info invisible">{{ location.subscriber_count }}</span>
+            </label>
             </div>
         </div>
         <a href="{% url 'details' location.pk %}">

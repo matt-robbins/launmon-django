@@ -1,0 +1,3 @@
+PUBKEY="BFjP2WuJ_e_5exLm-HbtDb25UZFqL8pg9cSXf5GXGq25n2NfVkt_BSXL1VLS0i6HiZ3rv0w5Kf-PCwFsCrdPXNA"
+PRIVKEY="C6un871fp6tPJPZM5efzmAKtLrCcSlzjqWgvf0T8FHE"
+EMAIL="mailto:matthew.robbins@gmail.com"

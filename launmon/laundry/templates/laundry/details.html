@@ -19,7 +19,20 @@
         </div>
     {% endif %}
 
-    {% include './location.html' with location=location %}
+    {% include './location.html' with location=location adv='true' %}
+
+    <div class="d-flex flex-row">
+        <div class="">
+            <button type="button" class="remind-button btn btn-danger">
+                Send Reminder 
+            </button>
+        </div>
+        <div class="p-2">
+            <div class="remind-spinner spinner-border spinner-border-sm text-info invisible" role="status">
+                <span class="visually-hidden">Waiting...</span>
+            </div>
+        </div>
+    </div>
 
     <div>
         <p style="margin-bottom:0; margin-right:1em;">Popular Times on: </p>
@@ -56,7 +69,7 @@
     <div class="mt-1 d-flex justify-content-between">
         <a
         href="{% url 'report' location.pk %}?from={{request.path}}"
-        class="btn btn-primary notify-button"
+        class="btn btn-primary report-button"
         role="button"
         >
         Report an Issue

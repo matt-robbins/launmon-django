@@ -33,11 +33,12 @@ class Webpusher:
         self.redis = redis.Redis()
         self.p = self.redis.pubsub(ignore_subscribe_messages=True)
         self.p.psubscribe("launmon-status:*")
+        self.p.psubscribe("launmon-remind:*")
 
     def run(self):
         for msg in self.p.listen():
 
-            _, location = str.split(msg['channel'].decode(),':')
+            chan, location = str.split(msg['channel'].decode(),':')
             trans = msg['data'].decode()
             try:
                 from_state,to_state = trans.split(":")
@@ -47,32 +48,36 @@ class Webpusher:
                 
             event_text = ""
             sass = "Get it!"
-            if (trans in ["none:wash", "dry:both"]):
-                event_text = "Washer Started"
-                sass = "Woohoo!"
-            elif (trans in ["none:dry","wash:both"]):
-                event_text = "Dryer Started"
-                sass = "Okay!"
-            elif (trans in ["both:wash","dry:none"]):
-                event_text = "Dryer Done"
-                sass = "Get it while it's hot!"
-            elif (trans in ["both:dry","wash:none"]):
-                event_text = "Washer Done"
-                sass = "Squeaky Clean!"
-            elif (trans == "both:none"):
-                event_text = "Done"
-            elif (to_state == "offline"):
-                event_text = "Went Offline"
-                sass = "Oh no!"
-            elif (to_state == "ooo"):
-                event_text = "Is Out of Order"
-                sass = "Oh no!"
-            elif (from_state == "offline"):
-                event_text = "Came Back Online"
-                sass = "Yay!!"
-            elif (from_state == "ooo"):
-                event_text = "Is Back"
-                sass = "Yay!!"
+            if (chan == "launmon-status"):
+                if (trans in ["none:wash", "dry:both"]):
+                    event_text = "Washer Started"
+                    sass = "Woohoo!"
+                elif (trans in ["none:dry","wash:both"]):
+                    event_text = "Dryer Started"
+                    sass = "Okay!"
+                elif (trans in ["both:wash","dry:none"]):
+                    event_text = "Dryer Done"
+                    sass = "Get it while it's hot!"
+                elif (trans in ["both:dry","wash:none"]):
+                    event_text = "Washer Done"
+                    sass = "Squeaky Clean!"
+                elif (trans == "both:none"):
+                    event_text = "Done"                    
+                elif (to_state == "offline"):
+                    event_text = "Went Offline"
+                    sass = "Oh no!"
+                elif (to_state == "ooo"):
+                    event_text = "Is Out of Order"
+                    sass = "Oh no!"
+                elif (from_state == "offline"):
+                    event_text = "Came Back Online"
+                    sass = "Yay!!"
+                elif (from_state == "ooo"):
+                    event_text = "Is Back"
+                    sass = "Yay!!"
+            elif (chan == "launmon-remind"):
+                event_text = "Your Laundry is Done!"
+                sass = "Gentle reminder from a concerned citizen :)"
 
             payload = {"location":"","message":event_text, "sass":sass}
 

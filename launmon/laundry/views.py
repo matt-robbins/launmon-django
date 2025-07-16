@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 import json
-
+from redis import Redis
+from daemon.DataSink import RedisPublisher
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -108,6 +110,13 @@ def timeline(request, location=None):
     events = Event.objects.filter(location=loc)
 
     return render(request,"laundry/timeline.html", {"location":loc,"events":events},)
+
+def push_notify(request, location=None):
+    p = RedisPublisher()
+    #r = Redis()
+    p.publish(['remind', location], "notify")
+    #r.publish(f"launmon-status:{location}","notify")
+    return JsonResponse({'status': 'ok'})
 
 def cycles_json(request):
 
@@ -222,11 +231,14 @@ def add_site(request):
     
     us = UserSite()
     us.user = user
-    us.site = Site.objects.get(pk=sitekey)
+    try:
+        us.site = Site.objects.get(pk=sitekey)
+    except Exception as e:
+        return HttpResponseRedirect(reverse('index')+"?message=Invalid site key!")
     try:
         us.save()
     except Exception as e:
-        print(e)
+        return HttpResponseRedirect(reverse('index')+"?message=You're already following this site!")
 
     return HttpResponseRedirect(reverse('index')+f'?message=Added {us.site.name}!')
 
@@ -258,6 +270,14 @@ def subscribe(request):
 
         Subscription(endpoint=ep,location=Location.objects.get(pk=loc),subscription=sub).save()
 
+        k = f'location-serializer:{loc}'
+        print(f"sub: deleting {k}")
+
+        cache.delete(k)
+
+        p = RedisPublisher()
+        p.publish(["subscriber",loc],"sub")
+
         return HttpResponse("")
     return HttpResponse(status=204)
 
@@ -267,6 +287,15 @@ def unsubscribe(request):
 
         ep = data['endpoint']
         loc = data['machine']
+
+        k = f'location-serializer:{loc}'
+        print(f"unsub: deleting {k}")
+
+        cache.delete(k)
+
+        p = RedisPublisher()
+        p.publish(["subscriber",loc],"un")
+
         # just in case it gets signed up multiple times...
         Subscription.objects.filter(location=loc,endpoint=ep).all().delete()
         return HttpResponse("")
@@ -277,7 +306,9 @@ def check_subscription(request,endpoint=""):
     try:
         val = []
         for s in Subscription.objects.filter(endpoint=endpoint).all():
+            count = s.location.subscriber_count()
             val.append({"subscription": s.subscription,
+                "count": count,
                 "location": s.location.pk,
                 "endpoint": s.endpoint})
     except Exception as e:

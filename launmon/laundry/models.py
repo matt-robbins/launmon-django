@@ -27,6 +27,7 @@ class UserSite(models.Model):
     
     class Meta:
         indexes = [models.Index(name='user_site_index', fields=['user','site'],)]
+        unique_together = ('user', 'site',)
 
 @receiver(post_save, sender=User)
 def user_saved(sender, instance, **kwargs):
@@ -121,6 +122,9 @@ class Location(models.Model):
             issue = None
         
         return issue
+
+    def subscriber_count(self):
+        return self.subscription_set.count()
         
     def get_baseline_current(self):
         # use the cache cause this is expensive

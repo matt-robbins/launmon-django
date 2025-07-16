@@ -12,7 +12,6 @@ function askPermission() {
 }
 
 window.subscribe = async (machine=4,unsubscribe=false) => {
-    console.log("subscribing?")
     if (!('serviceWorker' in navigator)) {
         alert("Your browser does not seem to support Service Workers. " +
         "This means you'll be unable to recieve push messages.")
@@ -24,10 +23,7 @@ window.subscribe = async (machine=4,unsubscribe=false) => {
 
         return;
     }
-    console.log("waiting for service worker to be ready")
     const registration = await navigator.serviceWorker.ready;
-
-    console.log("ready")
 
     navigator.serviceWorker.addEventListener("message", (message) => {
         console.log("got message! updating subscriptions")
@@ -49,23 +45,17 @@ window.subscribe = async (machine=4,unsubscribe=false) => {
     }
 
     var subscription = await registration.pushManager.getSubscription()
-    console.log(subscription);
     if(subscription === null){
         // Subscribe to push notifications
 
         const res = await fetch("{% url 'vapid-pubkey' %}");
-        console.log(res);
         const vapid_server_key = await res.text();
 
         subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: vapid_server_key,
         });
-
-        console.log("subscription: " + subscription)
     }
-
-    console.log("unsubscribe="+unsubscribe)
 
     var csrftoken = '{{ csrf_token }}';
 
@@ -79,6 +69,7 @@ window.subscribe = async (machine=4,unsubscribe=false) => {
                 'content-type': 'application/json',
             },
         });
+        console.log("subscribed")
     }
     else {
         var url = "{% url 'unsubscribe' %}"
@@ -90,6 +81,7 @@ window.subscribe = async (machine=4,unsubscribe=false) => {
                 'content-type': 'application/json',
             },
         });
+        console.log("unsubscribed")
     }
 
     updateSubscriptions()

@@ -42,7 +42,9 @@ function updateSubscriptions() {
                         setButtonSubscribed(btn,ids.includes(loc_id))
                     })
                 })
+                .then(update())
             })
         }
     });
 }
+ 

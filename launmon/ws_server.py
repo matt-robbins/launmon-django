@@ -33,5 +33,6 @@ async def main():
 
 if __name__ == "__main__":
     p.psubscribe("launmon-status:*")
+    p.psubscribe("launmon-subscriber:*")
     # p.psubscribe("launmon-current:*")
     asyncio.run(main())
