@@ -13,7 +13,7 @@ self.addEventListener('push', function(event) {
 	const notificationOptions = {
 		body: 'Come and get it.',
 		data: {
-			url: 'https://laundry.375lincoln.nyc',
+			url: 'https://laundry.375lincoln.nyc/laundry/',
 		},
 	};
 
